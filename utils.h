@@ -7,7 +7,10 @@
 
 #include <thread>
 using namespace std;
-
+/**
+ * Clears the screen after ms millisencods. Works if the output console emulates the terminal
+ * @param ms Number of milliseconds of wait time before the screen is cleared
+ */
 void delayedCLS(int ms){
     this_thread::sleep_for(chrono::milliseconds(ms));
     system("cls");
