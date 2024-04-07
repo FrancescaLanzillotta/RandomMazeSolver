@@ -10,8 +10,9 @@ Maze::Maze(int size){
     if(size % 2 == 0){
         this->size = size + 1;
         printf("Size of the maze has to be an odd number. New maze size is (%d, %d)\n", this->size, this->size);
-    }
-    maze.reserve(size);
+    } else
+        this->size = size;
+    maze.reserve(this->size);
 }
 
 vector<Cell> Maze::buildRowWall(int length) {

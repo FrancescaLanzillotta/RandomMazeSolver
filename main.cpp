@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-    int size = 10;
+    int size = 21;
     Maze m(size);
     m.initializeMaze();
     cout << m.toString();
