@@ -48,13 +48,13 @@ string Maze::toString() {
                     s += "  ";
                     break;
                 case START:
-                    s += "!";
+                    s += "! ";
                     break;
                 case EXIT:
-                    s += " ";
+                    s += "  ";
                     break;
                 case DOT:
-                    s += "o";
+                    s += "o ";
                     break;
             }
         }
@@ -71,5 +71,9 @@ void Maze::initializeMaze() {
             maze.push_back(buildCyclicWall(size));
         }
     }
+}
+// TODO: figure out how to properly set the exit randomly
+void Maze::set_exit(int row, int col) {
+    maze[row][col] = EXIT;
 }
 
