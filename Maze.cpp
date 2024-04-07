@@ -2,10 +2,15 @@
 // Created by franc on 07/04/2024.
 //
 
+#include <iostream>
 #include "Maze.h"
 
 using namespace std;
-Maze::Maze(int size) : size(size) {
+Maze::Maze(int size){
+    if(size % 2 == 0){
+        this->size = size + 1;
+        printf("Size of the maze has to be an odd number. New maze size is (%d, %d)\n", this->size, this->size);
+    }
     maze.reserve(size);
 }
 
@@ -18,8 +23,20 @@ vector<Cell> Maze::buildRowWall(int length) {
     return w;
 }
 
+vector<Cell> Maze::buildCyclicWall(int length){
+    vector<Cell> w;
+    w.reserve(length);
+    for (int i = 0; i < length; i++) {
+        if(i % 2 == 0)
+            w.push_back(WALL);
+        else
+            w.push_back(EMPTY);
+    }
+    return w;
+}
+
 string Maze::toString() {
-    string s;
+    string s = "\n";
     for(const auto& row : maze){
         for(Cell c : row){
             switch (c) {
@@ -50,14 +67,7 @@ void Maze::initializeMaze() {
         if(row % 2 == 0)
             maze.push_back(buildRowWall(size));
         else{
-            vector<Cell> r;
-            for(int cell = 0; cell < size; cell++){
-                if(cell % 2 == 0)
-                    r.push_back(WALL);
-                else
-                    r.push_back(EMPTY);
-            }
-            maze.push_back(r);
+            maze.push_back(buildCyclicWall(size));
         }
     }
 }
