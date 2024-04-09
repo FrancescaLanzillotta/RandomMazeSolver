@@ -1,16 +1,33 @@
 #include <iostream>
+#include <random>
 #include "Maze.h"
 #include "utils.h"
 using namespace std;
 
+bool isExitValid(int r, int c, int size){
+    return (((r == 0 || r == size - 1) && c != 0 && c != size - 1) || ((c == 0 || c == size - 1) && r != 0 && r != size - 1));
+}
 int main() {
     // delayedCLS(1);
     int size = 11;
     Maze m(size);
     m.initializeMaze();
+
     cout << m.toString();
-    delayedCLS(1000);
-    m.set_exit(1, size - 1);
+    delayedCLS(500);
+
+    random_device rd;  // a seed source for the random number engine
+    mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
+    uniform_int_distribution<> distrib(0, size - 1);
+    int r;
+    int c;
+    do {
+        r = distrib(gen);
+        c = distrib(gen);
+    } while (!isExitValid(r, c, size));
+    m.set_exit(r, c);
     cout << m.toString();
+
     return 0;
+
 }

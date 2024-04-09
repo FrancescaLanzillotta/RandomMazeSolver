@@ -7,6 +7,10 @@
 
 #include <vector>
 #include <string>
+#include <unordered_set>
+#include <set>
+#include <random>
+
 
 using namespace std;
 enum Cell {
@@ -19,6 +23,7 @@ enum Cell {
 
 class Maze {
 private:
+    // TODO add random generator as attribute?
     vector<vector<Cell>> maze;
     int size;
 public:
@@ -28,6 +33,10 @@ public:
     string toString();
     void initializeMaze();  // TODO change to private
     void set_exit(int row, int col);
+    [[nodiscard]] bool areValid(int r, int c) const;
+    [[nodiscard]] bool areValid(pair<int, int> p) const;
+    void generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng);
+    auto getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
 };
 
 
