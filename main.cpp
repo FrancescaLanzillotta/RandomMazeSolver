@@ -7,7 +7,7 @@ bool isExitValid(int r, int c, int size){
     return (((r == 0 || r == size - 1) && c != 0 && c != size - 1) || ((c == 0 || c == size - 1) && r != 0 && r != size - 1));
 }
 int main() {
-    int size = 11;
+    int size = 15;
     Maze m(size);
     m.initializeMaze();
 

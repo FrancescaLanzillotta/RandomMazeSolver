@@ -87,7 +87,7 @@ set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair
 }
 
 void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng) {
-
+    visited.insert(currentCell);
     if(currentCell.first == 0)
         currentCell.first += 1;
     if (currentCell.first == size - 1)
@@ -99,8 +99,9 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited
 
     maze[currentCell.first][currentCell.second] = EMPTY;
     visited.insert(currentCell);
-    set<pair<int, int>> unvisited = getUnvisitedCells(currentCell, visited);
-    while (!unvisited.empty()){
+
+    while (!getUnvisitedCells(currentCell, visited).empty()){
+        set<pair<int, int>> unvisited = getUnvisitedCells(currentCell, visited);
         // Choose one of the unvisited neighbours randomly
         uniform_int_distribution<int> distrib(0, unvisited.size() - 1);
         auto itr = unvisited.begin();
@@ -124,11 +125,12 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited
         visited.insert(make_pair(wall_r, wall_c));
 
         // this_thread::sleep_for(chrono::milliseconds(500));
-        delayedCLS(500);
+        delayedCLS(300);
         cout << toString();
         generatePath(toVisit, visited, rng);
-        }
     }
+}
+
     /*
     * Given a current cell as a parameter
     *      Mark the current cell as visited
