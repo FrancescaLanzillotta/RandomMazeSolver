@@ -36,6 +36,7 @@ public:
     [[nodiscard]] bool areValid(pair<int, int> p) const;
     void generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng);
     set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
+    pair<int, int> setRandomExit(std::mt19937 &rng);
 };
 
 
