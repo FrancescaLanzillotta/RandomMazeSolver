@@ -87,6 +87,17 @@ set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair
 }
 
 void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng) {
+
+    if(currentCell.first == 0)
+        currentCell.first += 1;
+    if (currentCell.first == size - 1)
+        currentCell.first -= 1;
+    if (currentCell.second == 0)
+        currentCell.second += 1;
+    if (currentCell.second == size - 1)
+        currentCell.second -= 1;
+
+    maze[currentCell.first][currentCell.second] = EMPTY;
     visited.insert(currentCell);
     set<pair<int, int>> unvisited = getUnvisitedCells(currentCell, visited);
     while (!unvisited.empty()){
@@ -108,20 +119,14 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited
             wall_r = currentCell.first + offset;
             wall_c = currentCell.second;
         }
-        if(wall_r == 0)
-            wall_r += 1;
-        if (wall_r == size - 1)
-            wall_r -= 1;
-        if (wall_c == 0)
-            wall_c += 1;
-        if (wall_c == size - 1)
-            wall_c -= 1;
 
         maze[wall_r][wall_c] = EMPTY;   // remove the wall between the current cell and the chosen cell
-        this_thread::sleep_for(chrono::milliseconds(500));
-        // delayedCLS(500);
-        // cout << toString();
-        generatePath(make_pair(wall_r, wall_c), visited, rng);
+        visited.insert(make_pair(wall_r, wall_c));
+
+        // this_thread::sleep_for(chrono::milliseconds(500));
+        delayedCLS(500);
+        cout << toString();
+        generatePath(toVisit, visited, rng);
         }
     }
     /*

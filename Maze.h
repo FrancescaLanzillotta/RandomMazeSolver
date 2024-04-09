@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <set>
 #include <random>
+#include "utils.h"
 
 
 using namespace std;
@@ -34,7 +35,7 @@ public:
     [[nodiscard]] bool areValid(int r, int c) const;
     [[nodiscard]] bool areValid(pair<int, int> p) const;
     void generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng);
-    auto getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
+    set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
 };
 
 
