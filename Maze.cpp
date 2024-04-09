@@ -15,27 +15,6 @@ Maze::Maze(int size){
     maze.reserve(this->size);
 }
 
-vector<Cell> Maze::buildRowWall(int length) {
-    vector<Cell> w;
-    w.reserve(length);
-    for (int i = 0; i < length; i++) {
-        w.push_back(WALL);
-    }
-    return w;
-}
-
-vector<Cell> Maze::buildCyclicWall(int length){
-    vector<Cell> w;
-    w.reserve(length);
-    for (int i = 0; i < length; i++) {
-        if(i % 2 == 0)
-            w.push_back(WALL);
-        else
-            w.push_back(EMPTY);
-    }
-    return w;
-}
-
 string Maze::toString() {
     string s = "\n";
     for(const auto& row : maze){
@@ -72,11 +51,15 @@ bool Maze::areValid(pair<int, int> p) const {
 
 void Maze::initializeMaze() {
     for(int row = 0; row < size; row++){
-        if(row % 2 == 0)
-            maze.push_back(buildRowWall(size));
-        else{
-            maze.push_back(buildCyclicWall(size));
+        vector<Cell> mazeRow;
+        mazeRow.reserve(size);
+        for (int col= 0; col < size; col++) {
+            if((row % 2 == 0 ) || (col % 2 == 0))
+                mazeRow.push_back(WALL);
+            else
+                mazeRow.push_back(EMPTY);
         }
+        maze.push_back(mazeRow);
     }
 }
 
