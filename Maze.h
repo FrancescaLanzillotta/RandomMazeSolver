@@ -28,8 +28,6 @@ private:
     int size;
 public:
     explicit Maze(int size);
-    static vector<Cell> buildRowWall(int length);
-    vector<Cell> buildCyclicWall(int length);
     string toString();
     void initializeMaze();  // TODO change to private
     void set_exit(int row, int col);
