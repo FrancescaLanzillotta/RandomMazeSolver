@@ -42,7 +42,7 @@ string Maze::toString() {
     return s;
 }
 bool Maze::areValid(int r, int c) const{
-    return (((0 < r) && (r < size) && (0 < c) && (c < size)));
+    return ((r >= 0) && (r < size) && (c >= 0) && (c < size));
 }
 
 bool Maze::areValid(pair<int, int> p) const {
@@ -69,20 +69,21 @@ void Maze::set_exit(int row, int col) {
 }
 
 
-auto Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const{
+set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const{
     set<pair<int, int>> adj;
     // insert all cells adjacent to the current cell
     adj.insert(make_pair(currentCell.first - 2, currentCell.second));
     adj.insert(make_pair(currentCell.first, currentCell.second + 2));
     adj.insert(make_pair(currentCell.first + 2, currentCell.second));
     adj.insert(make_pair(currentCell.first, currentCell.second - 2));
-    
+
+    set<pair<int, int>> unvisited;
     for(auto c : adj){
-        // remove cells if their coordinates are invalid ore have been visited already
-        if (!areValid(c) || visited.find(c) != visited.end())
-            adj.erase(c);
+        // add cells only if their coordinates are valid and they haven't been visited yet
+        if (areValid(c) && visited.find(c) == visited.end())
+            unvisited.insert(c);
     }
-    return adj;
+    return unvisited;
 }
 
 void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng) {
@@ -101,13 +102,27 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited
             int offset = currentCell.second > toVisit.second ? -1 : 1;
             wall_r = currentCell.first;
             wall_c = currentCell.second + offset;
+
         } else {                                    // toVisit is either above or below the current cell
             int offset = currentCell.first > toVisit.first ? -1 : 1;
             wall_r = currentCell.first + offset;
             wall_c = currentCell.second;
         }
+        if(wall_r == 0)
+            wall_r += 1;
+        if (wall_r == size - 1)
+            wall_r -= 1;
+        if (wall_c == 0)
+            wall_c += 1;
+        if (wall_c == size - 1)
+            wall_c -= 1;
+
         maze[wall_r][wall_c] = EMPTY;   // remove the wall between the current cell and the chosen cell
+        this_thread::sleep_for(chrono::milliseconds(500));
+        // delayedCLS(500);
+        // cout << toString();
         generatePath(make_pair(wall_r, wall_c), visited, rng);
+        }
     }
     /*
     * Given a current cell as a parameter
@@ -117,7 +132,6 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited
     *          Remove the wall between the current cell and the chosen cell
     *          Invoke the routine recursively for the chosen cell
     */
-}
 
 
 
