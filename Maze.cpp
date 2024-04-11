@@ -6,13 +6,17 @@
 #include "Maze.h"
 
 using namespace std;
-Maze::Maze(int size){
+Maze::Maze(int size, std::mt19937 &rng): rng(rng){
     if(size % 2 == 0){
         this->size = size + 1;
         printf("Size of the maze has to be an odd number. New maze size is (%d, %d)\n", this->size, this->size);
     } else
         this->size = size;
+
     maze.reserve(this->size);
+    makeGrid();
+    this->exit = setRandomExit();
+
 }
 
 string Maze::toString() {
@@ -49,7 +53,7 @@ bool Maze::areValid(pair<int, int> p) const {
     return areValid(p.first, p.second);
 }
 
-void Maze::initializeMaze() {
+void Maze::makeGrid() {
     for(int row = 0; row < size; row++){
         vector<Cell> mazeRow;
         mazeRow.reserve(size);
@@ -63,12 +67,14 @@ void Maze::initializeMaze() {
     }
 }
 
-// TODO: figure out how to properly set the exit randomly
-void Maze::set_exit(int row, int col) {
-    maze[row][col] = EXIT;
+void Maze::setExit(pair<int, int> e) {
+    maze[exit.first][exit.second] = WALL;
+    exit = e;
+    maze[exit.first][exit.second] = EXIT;
 }
-
-
+pair<int, int> Maze::getExit() {
+    return exit;
+}
 
 set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const{
     set<pair<int, int>> adj;
@@ -87,7 +93,7 @@ set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair
     return unvisited;
 }
 
-void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited, std::mt19937 &rng) {
+void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited) {
     visited.insert(currentCell);
 
     // special case for exit cell
@@ -134,11 +140,11 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited
         // this_thread::sleep_for(chrono::milliseconds(500));
         delayedCLS(100);
         cout << toString();
-        generatePath(nextCell, visited, rng);
+        generatePath(nextCell, visited);
     }
 }
 
-pair<int, int> Maze::setRandomExit(mt19937 &rng){
+pair<int, int> Maze::setRandomExit(){
     int r, c;
     uniform_int_distribution<> distrib(1, size - 2);
     std::bernoulli_distribution b(0.5);
@@ -163,6 +169,7 @@ pair<int, int> Maze::setRandomExit(mt19937 &rng){
     maze[r][c] = EXIT;
     return make_pair(r, c);
 }
+
 
 /*
 * Given a current cell as a parameter
