@@ -18,8 +18,8 @@ int main() {
 
     set<pair<int, int>> visited;
 
-    m.generatePath(m.getExit(), visited);
-
+    m.generateMaze(true);
+    cout << m.toString();
     return 0;
 
 }

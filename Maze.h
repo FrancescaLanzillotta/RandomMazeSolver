@@ -33,12 +33,14 @@ public:
 
     explicit Maze(int size, std::mt19937 &rng);
     string toString();
-    void makeGrid();  // TODO change to private
     void setExit(pair<int, int> e);
     pair<int, int> getExit();
+private:
+    void makeGrid();
     [[nodiscard]] bool areValid(int r, int c) const;
     [[nodiscard]] bool areValid(pair<int, int> p) const;
-    void generatePath(pair<int, int> currentCell, set<pair<int, int>>& visited);
+    void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display);
+    void generateMaze(bool display = false);
     set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
     pair<int, int> setRandomExit();
 };
