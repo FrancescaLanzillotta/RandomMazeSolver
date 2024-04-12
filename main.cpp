@@ -11,14 +11,11 @@ int main() {
     uniform_int_distribution<> distrib(0, size - 1);
     Maze m(size, rng);
 
+    m.generateMaze(false);
     cout << m.toString();
-    delayedCLS(5000);
 
-
-
-    set<pair<int, int>> visited;
-
-    m.generateMaze(true);
+    m.setStart(make_pair(ceil(size/2), ceil(size/2)));
+    m.setExit(make_pair(0, 3));
     cout << m.toString();
     return 0;
 

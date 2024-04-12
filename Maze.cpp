@@ -6,7 +6,9 @@
 #include "Maze.h"
 
 using namespace std;
-Maze::Maze(int size, std::mt19937 &rng): rng(rng){
+// TODO Use setCell and getCell
+
+Maze::Maze(int size, std::mt19937 &rng): rng(rng){      // TODO initialize start attribute
     if(size % 2 == 0){
         this->size = size + 1;
         printf("Size of the maze has to be an odd number. New maze size is (%d, %d)\n", this->size, this->size);
@@ -15,7 +17,7 @@ Maze::Maze(int size, std::mt19937 &rng): rng(rng){
 
     maze.reserve(this->size);
     makeGrid();
-    this->exit = setRandomExit();
+    setRandomExit();
 
 }
 
@@ -31,13 +33,16 @@ string Maze::toString() {
                     s += "  ";
                     break;
                 case START:
-                    s += "! ";
+                    s += "@ ";
                     break;
                 case EXIT:
                     s += "  ";
                     break;
                 case DOT:
                     s += "o ";
+                    break;
+                case ERROR:
+                    s += "! ";
                     break;
             }
         }
@@ -68,9 +73,9 @@ void Maze::makeGrid() {
 }
 
 void Maze::setExit(pair<int, int> e) {
-    maze[exit.first][exit.second] = WALL;
+    setCell(exit, WALL);
     exit = e;
-    maze[exit.first][exit.second] = EXIT;
+    setCell(exit, EXIT);
 }
 pair<int, int> Maze::getExit() {
     return exit;
@@ -134,7 +139,7 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited
             wall_c = currentCell.second;
         }
 
-        maze[wall_r][wall_c] = EMPTY;   // remove the wall between currentCell and nextCell
+        setCell(wall_r, wall_c, EMPTY); // remove the wall between currentCell and nextCell
         visited.insert(make_pair(wall_r, wall_c));
 
         // this_thread::sleep_for(chrono::milliseconds(500));
@@ -146,7 +151,7 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited
     }
 }
 
-pair<int, int> Maze::setRandomExit(){
+void Maze::setRandomExit(){
     int r, c;
     uniform_int_distribution<> distrib(1, size - 2);
     std::bernoulli_distribution b(0.5);
@@ -168,14 +173,53 @@ pair<int, int> Maze::setRandomExit(){
             r = distrib(rng);
         } while (r % 2 == 0);   // avoid placing exit in the middle of walls
     }
-    maze[r][c] = EXIT;
-    return make_pair(r, c);
+
+    // setCell(r, c, EXIT);
+    setExit(make_pair(r, c));
 }
 
 void Maze::generateMaze(bool display) {
     set<pair<int, int>> visited;
-    generatePath(getExit(), visited, true);
+    generatePath(getExit(), visited, display);
 }
+
+void Maze::setCell(pair<int, int> c, Cell type) {
+    if (areValid(c)){
+        maze[c.first][c.second] = type;
+    }
+}
+
+void Maze::setStart(pair<int, int> c) {
+    if (areValid(c)) {
+        if (getCell(c) == EMPTY)
+            setCell(c, START);
+        else if (getCell(c.first - 1, c.second) == EMPTY)
+            setCell(c.first - 1, c.second, START);
+        else if (getCell(c.first, c.second -1) == EMPTY)
+            setCell(c.first, c.second -1, START);
+        else if (getCell(c.first + 1, c.second)== EMPTY)
+            setCell(c.first + 1, c.second, START);
+        else if (getCell(c.first, c.second + 1) == EMPTY)
+            setCell(c.first, c.second + 1, START);
+    }
+}
+
+Cell Maze::getCell(pair<int, int> c) {
+    if (areValid(c))
+        return maze[c.first][c.second];
+    else
+        return ERROR;
+}
+
+void Maze::setCell(int r, int c, Cell type) {
+    setCell(make_pair(r, c), type);
+}
+
+Cell Maze::getCell(int r, int c) {
+    return getCell(make_pair(r, c));
+}
+
+
 
 
 /*
