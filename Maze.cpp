@@ -128,6 +128,10 @@ void Maze::setRandomExit(){
     setExit(make_pair(r, c));
 }
 
+const pair<int, int> &Maze::getStart() const {
+    return start;
+}
+
 void Maze::setStart(pair<int, int> c) {
     if (areValid(c)) {
         pair<int, int> s;
@@ -230,6 +234,7 @@ void Maze::generateMaze(bool display) {
     set<pair<int, int>> visited;
     generatePath(getExit(), visited, display);
 }
+
 
 
 

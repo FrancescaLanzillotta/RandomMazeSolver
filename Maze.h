@@ -32,6 +32,7 @@ public:
     Cell getCell(int r, int c) const;
     void setExit(pair<int, int> e);
     pair<int, int> getExit();
+    [[nodiscard]] const pair<int, int> &getStart() const;
     void setStart(pair<int, int> c);
     void generateMaze(bool display = false);
 
