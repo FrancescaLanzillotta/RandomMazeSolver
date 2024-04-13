@@ -11,7 +11,7 @@
 using namespace std;
 class Particle {
 private:
-    Maze maze;
+    Maze& maze;
     pair<int, int> position;
     std::mt19937 rng;
 
@@ -21,9 +21,10 @@ public:
     void setPosition(const pair<int, int> &position);
 
 public:
-    Particle(Maze& m);
-    void move(Direction d);
-    void randMove();
+    explicit Particle(Maze& m);
+    void move(Direction d, bool display);
+    void randMove(bool display = false);
+    bool isValid(Direction d);
 
 };
 

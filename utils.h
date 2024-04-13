@@ -30,6 +30,6 @@ enum Direction {
     DOWN,
     LEFT,
     RIGHT,
-    STAY,
+    STAY,   // Make sure STAY is always the last
 };
 #endif //RANDOMMAZE_UTILS_H
