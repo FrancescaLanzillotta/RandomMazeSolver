@@ -37,7 +37,7 @@ string Maze::toString() {
                 case EXIT:
                     s += "  ";
                     break;
-                case DOT:
+                case PARTICLE:
                     s += "o ";
                     break;
                 case ERROR:
@@ -68,14 +68,14 @@ void Maze::setCell(int r, int c, Cell type) {
     setCell(make_pair(r, c), type);
 }
 
-Cell Maze::getCell(pair<int, int> c) {
+Cell Maze::getCell(pair<int, int> c) const {
     if (areValid(c))
         return maze[c.first][c.second];
     else
         return ERROR;
 }
 
-Cell Maze::getCell(int r, int c) {
+Cell Maze::getCell(int r, int c) const{
     return getCell(make_pair(r, c));
 }
 

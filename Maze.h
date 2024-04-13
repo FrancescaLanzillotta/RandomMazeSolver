@@ -28,8 +28,8 @@ public:
     string toString();
     void setCell(pair<int, int> c, Cell type);
     void setCell(int r, int c, Cell type);
-    Cell getCell(pair<int, int> c);
-    Cell getCell(int r, int c);
+    Cell getCell(pair<int, int> c) const;
+    Cell getCell(int r, int c) const;
     void setExit(pair<int, int> e);
     pair<int, int> getExit();
     void setStart(pair<int, int> c);
