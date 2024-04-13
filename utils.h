@@ -15,4 +15,21 @@ inline void delayedCLS(int ms=500){
     this_thread::sleep_for(chrono::milliseconds(ms));
     system("cls");
 }
+
+enum Cell {
+    WALL,
+    EMPTY,
+    START,
+    EXIT,
+    DOT,
+    ERROR,
+};
+
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    STAY,
+};
 #endif //RANDOMMAZE_UTILS_H

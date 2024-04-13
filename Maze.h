@@ -14,18 +14,9 @@
 
 
 using namespace std;
-enum Cell {
-    WALL,
-    EMPTY,
-    START,
-    EXIT,
-    DOT,
-    ERROR,
-};
 
 class Maze {
 private:
-    // TODO add start cell as attribute
     vector<vector<Cell>> maze;
     int size;
     pair<int, int> start;

@@ -6,9 +6,8 @@
 #include "Maze.h"
 
 using namespace std;
-// TODO Use setCell and getCell
 
-Maze::Maze(int size, std::mt19937 &rng): rng(rng){      // TODO initialize start attribute
+Maze::Maze(int size, std::mt19937 &rng): rng(rng){
     if(size % 2 == 0){
         this->size = size + 1;
         printf("Size of the maze has to be an odd number. New maze size is (%d, %d)\n", this->size, this->size);
