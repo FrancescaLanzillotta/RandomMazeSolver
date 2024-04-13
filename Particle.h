@@ -6,18 +6,25 @@
 #define RANDOMMAZE_PARTICLE_H
 
 #include <utility>
-
+#include "utils.h"
+#include "Maze.h"
 using namespace std;
 class Particle {
 private:
+    Maze maze;
     pair<int, int> position;
+    std::mt19937 rng;
+
 public:
     [[nodiscard]] const pair<int, int> &getPosition() const;
 
     void setPosition(const pair<int, int> &position);
 
 public:
-    explicit Particle(const pair<int, int> &position);
+    Particle(Maze& m, const pair<int, int> &p);
+    void move(Direction d);
+    void randMove();
+
 };
 
 
