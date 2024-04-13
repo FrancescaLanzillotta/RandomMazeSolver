@@ -4,7 +4,8 @@
 
 #include "Particle.h"
 
-Particle::Particle(Maze& m, const pair<int, int> &p) : maze(m), position(p) {
+Particle::Particle(Maze& m) : maze(m){
+    position = maze.getStart();
     random_device rd;
     rng = mt19937(rd());
 }

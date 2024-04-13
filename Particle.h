@@ -21,7 +21,7 @@ public:
     void setPosition(const pair<int, int> &position);
 
 public:
-    Particle(Maze& m, const pair<int, int> &p);
+    Particle(Maze& m);
     void move(Direction d);
     void randMove();
 
