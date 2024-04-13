@@ -18,7 +18,7 @@ Maze::Maze(int size, std::mt19937 &rng): rng(rng){      // TODO initialize start
     maze.reserve(this->size);
     makeGrid();
     setRandomExit();
-
+    setStart(make_pair(ceil(this->size / 2), ceil(this->size / 2)));
 }
 
 string Maze::toString() {
@@ -50,12 +50,34 @@ string Maze::toString() {
     }
     return s;
 }
+
 bool Maze::areValid(int r, int c) const{
     return ((r >= 0) && (r < size) && (c >= 0) && (c < size));
 }
 
 bool Maze::areValid(pair<int, int> p) const {
     return areValid(p.first, p.second);
+}
+
+void Maze::setCell(pair<int, int> c, Cell type) {
+    if (areValid(c)){
+        maze[c.first][c.second] = type;
+    }
+}
+
+void Maze::setCell(int r, int c, Cell type) {
+    setCell(make_pair(r, c), type);
+}
+
+Cell Maze::getCell(pair<int, int> c) {
+    if (areValid(c))
+        return maze[c.first][c.second];
+    else
+        return ERROR;
+}
+
+Cell Maze::getCell(int r, int c) {
+    return getCell(make_pair(r, c));
 }
 
 void Maze::makeGrid() {
@@ -77,8 +99,62 @@ void Maze::setExit(pair<int, int> e) {
     exit = e;
     setCell(exit, EXIT);
 }
+
 pair<int, int> Maze::getExit() {
     return exit;
+}
+
+void Maze::setRandomExit(){
+    int r, c;
+    uniform_int_distribution<> distrib(1, size - 2);
+    std::bernoulli_distribution b(0.5);
+
+    if (b(rng) == 0){
+        if(b(rng) == 0)
+            r = 0;          // exit is on the left side
+        else
+            r = size - 1;   // exit in on the right side
+        do {
+            c = distrib(rng);
+        } while (c % 2 == 0);   // avoid placing exit in the middle of walls
+    } else {
+        if (b(rng) == 0)
+            c = 0;          // exit is on the top side
+        else
+            c = size - 1;   // exit is on the bottom side
+        do {
+            r = distrib(rng);
+        } while (r % 2 == 0);   // avoid placing exit in the middle of walls
+    }
+    setExit(make_pair(r, c));
+}
+
+void Maze::setStart(pair<int, int> c) {
+    if (areValid(c)) {
+        pair<int, int> s;
+        if (getCell(c) == EMPTY)
+            s = c;
+            // setCell(c, START);
+        else if (getCell(c.first - 1, c.second) == EMPTY)
+            s = make_pair(c.first - 1, c.second);
+            // setCell(c.first - 1, c.second, START);
+        else if (getCell(c.first, c.second -1) == EMPTY)
+            s = make_pair(c.first, c.second -1);
+            //setCell(c.first, c.second -1, START);
+        else if (getCell(c.first + 1, c.second)== EMPTY)
+            s = make_pair(c.first + 1, c.second);
+            // setCell(c.first + 1, c.second, START);
+        else if (getCell(c.first, c.second + 1) == EMPTY)
+            s = make_pair(c.first, c.second + 1);
+            //setCell(c.first, c.second + 1, START);
+
+        if (start != make_pair(0, 0))   // if start wasn't initialized it contains (0, 0)
+            setCell(start, EMPTY);
+        start = s;
+        setCell(start, START);
+
+    }
+
 }
 
 set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const{
@@ -151,73 +227,15 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited
     }
 }
 
-void Maze::setRandomExit(){
-    int r, c;
-    uniform_int_distribution<> distrib(1, size - 2);
-    std::bernoulli_distribution b(0.5);
-
-    if (b(rng) == 0){
-        if(b(rng) == 0)
-            r = 0;          // exit is on the left side
-        else
-            r = size - 1;   // exit in on the right side
-        do {
-            c = distrib(rng);
-        } while (c % 2 == 0);   // avoid placing exit in the middle of walls
-    } else {
-        if (b(rng) == 0)
-            c = 0;          // exit is on the top side
-        else
-            c = size - 1;   // exit is on the bottom side
-        do {
-            r = distrib(rng);
-        } while (r % 2 == 0);   // avoid placing exit in the middle of walls
-    }
-
-    // setCell(r, c, EXIT);
-    setExit(make_pair(r, c));
-}
-
 void Maze::generateMaze(bool display) {
     set<pair<int, int>> visited;
     generatePath(getExit(), visited, display);
 }
 
-void Maze::setCell(pair<int, int> c, Cell type) {
-    if (areValid(c)){
-        maze[c.first][c.second] = type;
-    }
-}
 
-void Maze::setStart(pair<int, int> c) {
-    if (areValid(c)) {
-        if (getCell(c) == EMPTY)
-            setCell(c, START);
-        else if (getCell(c.first - 1, c.second) == EMPTY)
-            setCell(c.first - 1, c.second, START);
-        else if (getCell(c.first, c.second -1) == EMPTY)
-            setCell(c.first, c.second -1, START);
-        else if (getCell(c.first + 1, c.second)== EMPTY)
-            setCell(c.first + 1, c.second, START);
-        else if (getCell(c.first, c.second + 1) == EMPTY)
-            setCell(c.first, c.second + 1, START);
-    }
-}
 
-Cell Maze::getCell(pair<int, int> c) {
-    if (areValid(c))
-        return maze[c.first][c.second];
-    else
-        return ERROR;
-}
 
-void Maze::setCell(int r, int c, Cell type) {
-    setCell(make_pair(r, c), type);
-}
 
-Cell Maze::getCell(int r, int c) {
-    return getCell(make_pair(r, c));
-}
 
 
 
