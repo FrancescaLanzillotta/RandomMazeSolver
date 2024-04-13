@@ -5,7 +5,8 @@
 #include "Particle.h"
 
 Particle::Particle(Maze& m) : maze(m){
-    position = maze.getStart();
+    setPosition(maze.getStart());
+
     random_device rd;
     rng = mt19937(rd());
 }
@@ -15,7 +16,10 @@ const pair<int, int> &Particle::getPosition() const {
 }
 
 void Particle::setPosition(const pair<int, int> &p) {
-    Particle::position = p;
+    if (maze.areValid(p)){
+        position = p;
+        maze.setCell(position, PARTICLE);
+    }
 }
 
 void Particle::move(Direction d) {
@@ -39,8 +43,7 @@ void Particle::move(Direction d) {
     }
 
     if (maze.getCell(c) == EMPTY){
-        position = c;
-        maze.setCell(c, PARTICLE);     // setCell checks if coordinates are valid
+        setPosition(c);    // setCell checks if coordinates are valid
     }
 
 }
