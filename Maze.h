@@ -28,27 +28,30 @@ private:
     // TODO add start cell as attribute
     vector<vector<Cell>> maze;
     int size;
+    pair<int, int> start;
     pair<int, int> exit;
     std::mt19937 rng;
 public:
 
     explicit Maze(int size, std::mt19937 &rng);
     string toString();
-    void setExit(pair<int, int> e);
-    pair<int, int> getExit();
-    void generateMaze(bool display = false);
     void setCell(pair<int, int> c, Cell type);
     void setCell(int r, int c, Cell type);
-    void setStart(pair<int, int> c);
     Cell getCell(pair<int, int> c);
     Cell getCell(int r, int c);
+    void setExit(pair<int, int> e);
+    pair<int, int> getExit();
+    void setStart(pair<int, int> c);
+    void generateMaze(bool display = false);
+
 private:
     void makeGrid();
     [[nodiscard]] bool areValid(int r, int c) const;
     [[nodiscard]] bool areValid(pair<int, int> p) const;
+    void setRandomExit();
     void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display);
     set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
-    void setRandomExit();
+
 };
 
 
