@@ -26,6 +26,8 @@ public:
 
     explicit Maze(int size, std::mt19937 &rng);
     string toString();
+    [[nodiscard]] bool areValid(int r, int c) const;
+    [[nodiscard]] bool areValid(pair<int, int> p) const;
     void setCell(pair<int, int> c, Cell type);
     void setCell(int r, int c, Cell type);
     Cell getCell(pair<int, int> c) const;
@@ -38,8 +40,6 @@ public:
 
 private:
     void makeGrid();
-    [[nodiscard]] bool areValid(int r, int c) const;
-    [[nodiscard]] bool areValid(pair<int, int> p) const;
     void setRandomExit();
     void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display);
     set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
