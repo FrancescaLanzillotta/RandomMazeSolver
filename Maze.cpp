@@ -138,19 +138,16 @@ void Maze::setStart(pair<int, int> c) {
         pair<int, int> s;
         if (getCell(c) == EMPTY)
             s = c;
-            // setCell(c, START);
         else if (getCell(c.first - 1, c.second) == EMPTY)
             s = make_pair(c.first - 1, c.second);
-            // setCell(c.first - 1, c.second, START);
         else if (getCell(c.first, c.second -1) == EMPTY)
             s = make_pair(c.first, c.second -1);
-            //setCell(c.first, c.second -1, START);
         else if (getCell(c.first + 1, c.second)== EMPTY)
             s = make_pair(c.first + 1, c.second);
-            // setCell(c.first + 1, c.second, START);
         else if (getCell(c.first, c.second + 1) == EMPTY)
             s = make_pair(c.first, c.second + 1);
-            //setCell(c.first, c.second + 1, START);
+        else
+            s = make_pair(c.first - 1, c.second - 1);
 
         if (start != make_pair(0, 0))   // if start wasn't initialized it contains (0, 0)
             setCell(start, EMPTY);
@@ -224,7 +221,7 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited
 
         // this_thread::sleep_for(chrono::milliseconds(500));
         if (display){
-            delayedCLS(100);
+            delayedCLS(50);
             cout << toString();
         }
         generatePath(nextCell, visited, display);
