@@ -25,7 +25,7 @@ public:
     void move(Direction d, bool display);
     void randMove(bool display = false);
     bool isValid(Direction d);
-
+    pair<int, int> toCoordinates(Direction d);
 };
 
 

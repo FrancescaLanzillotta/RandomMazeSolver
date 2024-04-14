@@ -94,4 +94,26 @@ bool Particle::isValid(Direction d) {
     return isValid;
 }
 
+pair<int, int> Particle::toCoordinates(Direction d) {
+    pair<int, int> c;
+    switch (d) {
+        case UP:
+            c = make_pair(position.first - 1, position.second);
+            break;
+        case DOWN:
+            c = make_pair(position.first + 1, position.second);
+            break;
+        case LEFT:
+            c = make_pair(position.first, position.second - 1);
+            break;
+        case RIGHT:
+            c = make_pair(position.first, position.second + 1);
+            break;
+        case STAY:
+            c = position;
+            break;
+    }
+    return c;
+}
+
 
