@@ -17,7 +17,8 @@ Maze::Maze(int size, std::mt19937 &rng): rng(rng){
     maze.reserve(this->size);
     makeGrid();
     setRandomExit();
-    setStart(make_pair(ceil(this->size / 2), ceil(this->size / 2)));
+    float sCoord = static_cast<float>(size) / 2;
+    setStart(make_pair(ceil(sCoord), ceil(sCoord)));
 }
 
 string Maze::toString() {
