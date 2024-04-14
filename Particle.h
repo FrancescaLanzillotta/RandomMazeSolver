@@ -17,15 +17,14 @@ private:
 
 public:
     [[nodiscard]] const pair<int, int> &getPosition() const;
-
     void setPosition(const pair<int, int> &position);
 
 public:
     explicit Particle(Maze& m);
+    pair<int, int> toCoordinates(Direction d);
+    bool isValid(Direction d);
     void move(Direction d, bool display);
     void randMove(bool display = false);
-    bool isValid(Direction d);
-    pair<int, int> toCoordinates(Direction d);
 };
 
 
