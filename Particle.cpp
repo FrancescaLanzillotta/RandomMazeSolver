@@ -50,15 +50,11 @@ void Particle::move(Direction d, bool display) {
             c = position;
             break;
     }
-
-    if (maze.getCell(c)  != WALL){
-        setPosition(c);
-        if (display){
-            delayedCLS(500);
-            cout << maze.toString();
-        }
+    setPosition(c); // setPosition checks if movement is allowed
+    if (display){
+        delayedCLS(500);
+        cout << maze.toString();
     }
-
 }
 
 
