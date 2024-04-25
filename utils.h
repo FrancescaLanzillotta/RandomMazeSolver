@@ -22,6 +22,7 @@ enum Cell {
     START,
     EXIT,
     PARTICLE,
+    PATH,
     ERROR,
 };
 

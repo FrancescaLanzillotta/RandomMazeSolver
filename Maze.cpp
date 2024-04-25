@@ -41,6 +41,9 @@ string Maze::toString() {
                 case PARTICLE:
                     s += "o ";
                     break;
+                case PATH:
+                    s += "x ";
+                    break;
                 case ERROR:
                     s += "! ";
                     break;
