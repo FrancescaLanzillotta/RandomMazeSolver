@@ -18,7 +18,7 @@ const pair<int, int> &Particle::getPosition() const {
 
 void Particle::setPosition(const pair<int, int> &p) {
     if (maze.areValid(p) && maze.getCell(p) != WALL){
-        if (position != make_pair(0, 0)){
+        if (position != make_pair(0, 0)){   // position not initialized yet
             if (maze.getExit() == position)
                 maze.setCell(position, EXIT);
             else if(maze.getStart() == position)
@@ -58,8 +58,7 @@ bool Particle::isValid(Direction d) {
     return maze.areValid(c) && maze.getCell(c) != WALL;
 }
 
-void Particle::move(Direction d, bool display) {
-    pair<int, int> c = toCoordinates(d);
+void Particle::move(pair<int, int> c, bool display) {
     setPosition(c); // setPosition checks if movement is allowed
     if (position == path.back()) // backtracking
         path.pop_back();
@@ -71,6 +70,11 @@ void Particle::move(Direction d, bool display) {
     }
 }
 
+
+void Particle::move(Direction d, bool display) {
+    move(toCoordinates(d), display);
+}
+
 void Particle::randMove(bool display) {
     vector<Direction> moves;
     for (int d = 0; d != STAY; d++) {
@@ -80,6 +84,11 @@ void Particle::randMove(bool display) {
     uniform_int_distribution<> dir(0, moves.size() - 1);
     move(moves[dir(rng)], display);
 }
+
+const vector<pair<int, int>> &Particle::getPath() const {
+    return path;
+}
+
 
 
 

@@ -14,18 +14,20 @@ private:
     Maze& maze;
     pair<int, int> position;
     vector<pair<int, int>> path;
+private:
     std::mt19937 rng;
 
 public:
     [[nodiscard]] const pair<int, int> &getPosition() const;
     void setPosition(const pair<int, int> &position);
-
-public:
+    const vector<pair<int, int>> &getPath() const;
     explicit Particle(Maze& m);
     pair<int, int> toCoordinates(Direction d);
     bool isValid(Direction d);
+    void move(pair<int, int> c, bool display);
     void move(Direction d, bool display);
     void randMove(bool display = false);
+
 };
 
 
