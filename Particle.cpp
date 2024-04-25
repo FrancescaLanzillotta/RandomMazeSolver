@@ -7,7 +7,7 @@
 
 Particle::Particle(Maze& m) : maze(m){
     setPosition(maze.getStart());
-
+    path.push_back(position);
     random_device rd;
     rng = mt19937(rd());
 }
@@ -61,6 +61,10 @@ bool Particle::isValid(Direction d) {
 void Particle::move(Direction d, bool display) {
     pair<int, int> c = toCoordinates(d);
     setPosition(c); // setPosition checks if movement is allowed
+    if (position == path.back()) // backtracking
+        path.pop_back();
+    else
+        path.push_back(position); // moving forward
     if (display){
         delayedCLS(500);
         cout << maze.toString();

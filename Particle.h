@@ -13,6 +13,7 @@ class Particle {
 private:
     Maze& maze;
     pair<int, int> position;
+    vector<pair<int, int>> path;
     std::mt19937 rng;
 
 public:
