@@ -21,6 +21,13 @@ private:
     int size;
     pair<int, int> start;
     pair<int, int> exit;
+    vector<pair<int, int>> solution;
+public:
+    const vector<pair<int, int>> &getSolution() const;
+
+    void setSolution(const vector<pair<int, int>> &solution);
+
+private:
     std::mt19937 rng;
 public:
 

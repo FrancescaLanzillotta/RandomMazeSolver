@@ -236,6 +236,14 @@ void Maze::generateMaze(bool display) {
     generatePath(getExit(), visited, display);
 }
 
+const vector<pair<int, int>> &Maze::getSolution() const {
+    return solution;
+}
+
+void Maze::setSolution(const vector<pair<int, int>> &solution) {
+    Maze::solution = solution;
+}
+
 
 
 
