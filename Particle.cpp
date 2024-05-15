@@ -30,7 +30,20 @@ void Particle::setPosition(const pair<int, int> &p) {
         maze.setCell(position, PARTICLE);
     }
 }
-
+void Particle::setPosition(const pair<int, int> &p, Cell underneath){
+    if (maze.areValid(p) && maze.getCell(p) != WALL){
+        if (position != make_pair(0, 0)){   // position not initialized yet
+            if (maze.getExit() == position)
+                maze.setCell(position, EXIT);
+            else if(maze.getStart() == position)
+                maze.setCell(position, START);
+            else
+                maze.setCell(position, underneath);
+        }
+        position = p;
+        maze.setCell(position, PARTICLE);
+    }
+}
 pair<int, int> Particle::toCoordinates(Direction d) {
     pair<int, int> c;
     switch (d) {
@@ -60,7 +73,8 @@ bool Particle::isValid(Direction d) {
 
 void Particle::move(pair<int, int> c, bool display) {
     setPosition(c); // setPosition checks if movement is allowed
-    if (position == path.back()) // backtracking
+
+    if (path.size() > 1 && position == path[path.size() - 2]) // backtracking
         path.pop_back();
     else
         path.push_back(position); // moving forward
@@ -88,6 +102,37 @@ void Particle::randMove(bool display) {
 const vector<pair<int, int>> &Particle::getPath() const {
     return path;
 }
+
+vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solution, bool display) {
+    bool onTrack = false;
+    int index;
+    while (!onTrack){
+        for(int i = 0; i < solution.size(); i++){
+            if(position == solution[i]){
+                onTrack = true;
+                index = i;
+                break;
+            } else {
+                // path.pop_back();
+                move(path[path.size() - 2], display);
+            }
+        }
+    }
+    return vector<pair<int, int>> (solution.begin() + index, solution.end());
+}
+
+void Particle::followPath(const vector<pair<int, int>> &p, bool display) {
+    for (auto c : p){
+        move(c, display);
+        maze.setCell(path[path.size() - 2], PATH);
+    }
+}
+
+void Particle::setSeed(int seed) {
+    rng.seed(seed);
+}
+
+
 
 
 

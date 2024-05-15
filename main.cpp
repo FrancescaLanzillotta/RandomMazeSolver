@@ -5,6 +5,7 @@
 using namespace std;
 
 int main() {
+
     int size = 11;
     random_device rd;  // a seed source for the random number engine
     mt19937 rng(rd()); // mersenne_twister_engine seeded with rd()
@@ -15,16 +16,55 @@ int main() {
 
     m.generateMaze(true);
 
+    vector<Particle> particles;
+    int nParticles = 2;
+    for (int i = 0; i < nParticles; ++i) {
+        particles.emplace_back(m);
+        particles[i].setSeed(i + 2);
+    }
+    bool out = false;
+    vector<pair<int, int>> solution;
+    while (!out){
+        for(auto& p : particles){
+            p.randMove(false);
+            delayedCLS(1);
+            cout << m.toString();
+            if (p.getPosition() == m.getExit()){
+                out = true;
+                solution = p.getPath();
+                break;
+            }
+        }
+    }
+
+//    for(auto c : solution){
+//        printf("[%d, %d]\n   |\n   v\n", c.first, c.second);
+//    }
+
+    for (auto c : solution){
+        if (m.getCell(c) != PARTICLE)
+            m.setCell(c, PATH);
+    }
+
+    for( auto& p : particles){
+        if(p.getPosition() != m.getExit()){
+            auto s = p.backtrack(solution, true);
+            this_thread::sleep_for(chrono::milliseconds(2000));
+            p.followPath(s, true);
+
+        }
+    }
+
+    /*
     Particle p(m);
     vector<Direction> path;
-
-    vector<Direction> moveset = {UP, UP, UP, UP, LEFT, LEFT, RIGHT};
+    vector<Direction> moveset = {UP, UP, UP, UP, LEFT, LEFT};
 
     for (auto move : moveset){
         p.move(move, false);
-        m.setCell(p.getPosition(), PATH);
+        m.setCell(p.getPath()[p.getPath().size() - 2], PATH);
+        delayedCLS(1000);
         cout << m.toString();
-        delayedCLS(100);
         path.push_back(move);
     }
 
@@ -49,30 +89,30 @@ int main() {
                 backtrack = STAY;
                 break;
         }
-        p.move(backtrack, true);
+        p.move(backtrack, false);
+        delayedCLS(1000);
+        cout << m.toString();
     }
 
 
+        vector<Particle> particles;
+        int nParticles = 15;
+        for (int i = 0; i < nParticles; ++i) {
+            particles.emplace_back(m);
 
-/*
-    vector<Particle> particles;
-    int nParticles = 15;
-    for (int i = 0; i < nParticles; ++i) {
-        particles.emplace_back(m);
-
-    }
-    bool out = false;
-    while (!out){
-        for(auto& p : particles){
-            p.randMove(false);
-            delayedCLS(1);
-            cout << m.toString();
-            if (p.getPosition() == m.getExit()){
-                out = true;
-                break;
+        }
+        bool out = false;
+        while (!out){
+            for(auto& p : particles){
+                p.randMove(false);
+                delayedCLS(1);
+                cout << m.toString();
+                if (p.getPosition() == m.getExit()){
+                    out = true;
+                    break;
+                }
             }
         }
-    }
 
     */
     return 0;
