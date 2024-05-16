@@ -40,7 +40,6 @@ void Particle::setPosition(const pair<int, int> &p, Cell underneath){
             else
                 maze.setCell(position, underneath);
         }
-        // TODO restore cell function
 
         position = p;
         maze.setCell(position, PARTICLE);

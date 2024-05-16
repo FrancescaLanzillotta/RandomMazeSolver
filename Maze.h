@@ -17,6 +17,7 @@ using namespace std;
 
 class Maze {
 private:
+
     vector<vector<Cell>> maze;
     int size;
     pair<int, int> start;
