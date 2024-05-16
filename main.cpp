@@ -11,13 +11,12 @@ int main() {
     mt19937 rng(rd()); // mersenne_twister_engine seeded with rd()
     rng.seed(42);
 
-
     Maze m(size, rng);
 
     m.generateMaze(true);
 
     vector<Particle> particles;
-    int nParticles = 2;
+    int nParticles = 4;
     for (int i = 0; i < nParticles; ++i) {
         particles.emplace_back(m);
         particles[i].setSeed(i + 2);

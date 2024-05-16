@@ -25,8 +25,8 @@ public:
     void setSeed(int seed);
     pair<int, int> toCoordinates(Direction d);
     bool isValid(Direction d);
-    void move(pair<int, int> c, bool display);
-    void move(Direction d, bool display);
+    void move(pair<int, int> c, Cell underneath, bool display);
+    void move(Direction d, Cell underneath, bool display);
     void randMove(bool display = false);
     vector<pair<int, int>> backtrack(const vector<pair<int, int>>& solution, bool display);
     void followPath(const vector<pair<int, int>>& p, bool display);

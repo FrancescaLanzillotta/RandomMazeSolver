@@ -22,15 +22,11 @@ private:
     pair<int, int> start;
     pair<int, int> exit;
     vector<pair<int, int>> solution;
+    std::mt19937 rng;
+
 public:
     const vector<pair<int, int>> &getSolution() const;
-
     void setSolution(const vector<pair<int, int>> &solution);
-
-private:
-    std::mt19937 rng;
-public:
-
     explicit Maze(int size, std::mt19937 &rng);
     string toString();
     [[nodiscard]] bool areValid(int r, int c) const;
@@ -44,6 +40,7 @@ public:
     [[nodiscard]] const pair<int, int> &getStart() const;
     void setStart(pair<int, int> c);
     void generateMaze(bool display = false);
+
 
 private:
     void makeGrid();
