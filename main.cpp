@@ -6,60 +6,6 @@ using namespace std;
 
 int main() {
 
-    struct mazeCell {
-        Cell type;
-        int nParticles;
-    };
-    vector<vector<pair<Cell, int>>> maze;
-    int size = 11;
-
-    for(int row = 0; row < size; row++){
-        vector<pair<Cell, int>> mazeRow;
-        mazeRow.reserve(size);
-        for (int col= 0; col < size; col++) {
-            if((row % 2 == 0 ) || (col % 2 == 0))
-                mazeRow.emplace_back(WALL, 0);
-            else
-                mazeRow.emplace_back(EMPTY, 0);
-        }
-        maze.push_back(mazeRow);
-    }
-
-    string s = "\n";
-    for(const auto& row : maze){
-        for(auto c : row){
-            if (c.second > 0){
-                s += "o ";
-            } else
-                switch (c.first) {
-                    case WALL:
-                        s += "# ";
-                        break;
-                    case EMPTY:
-                        s += "  ";
-                        break;
-                    case START:
-                        s += "@ ";
-                        break;
-                    case EXIT:
-                        s += "  ";
-                        break;
-                    case PARTICLE:
-                        s += "o ";
-                        break;
-                    case PATH:
-                        s += "x ";
-                        break;
-                    case ERROR:
-                        s += "! ";
-                        break;
-                }
-        }
-        s += "\n";
-    }
-
-    cout << s;
-    /*
     int size = 11;
     random_device rd;  // a seed source for the random number engine
     mt19937 rng(rd()); // mersenne_twister_engine seeded with rd()
@@ -69,6 +15,7 @@ int main() {
 
     m.generateMaze(true);
 
+    /*
     vector<Particle> particles;
     int nParticles = 4;
     for (int i = 0; i < nParticles; ++i) {
@@ -95,8 +42,8 @@ int main() {
 //    }
 
     for (auto c : solution){
-        if (m.getCell(c) != PARTICLE)
-            m.setCell(c, PATH);
+        if (m.getCellType(c) != PARTICLE)
+            m.setCellType(c, PATH);
     }
 
     for( auto& p : particles){
@@ -115,7 +62,7 @@ int main() {
 
     for (auto move : moveset){
         p.move(move, false);
-        m.setCell(p.getPath()[p.getPath().size() - 2], PATH);
+        m.setCellType(p.getPath()[p.getPath().size() - 2], PATH);
         delayedCLS(1000);
         cout << m.toString();
         path.push_back(move);

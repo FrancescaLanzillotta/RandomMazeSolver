@@ -31,10 +31,14 @@ public:
     string toString();
     [[nodiscard]] bool areValid(int r, int c) const;
     [[nodiscard]] bool areValid(pair<int, int> p) const;
-    void setCell(pair<int, int> c, Cell type);
-    void setCell(int r, int c, Cell type);
-    Cell getCell(pair<int, int> c) const;
-    Cell getCell(int r, int c) const;
+    void setCell(int r, int c, Cell type, int nParticles);
+    void setCell(pair<int, int> c, Cell type, int nParticles);
+    [[nodiscard]] pair<Cell, int> getCell(int r, int c) const;
+    pair<Cell, int> getCell (pair<int, int> c) const;
+    void setCellType(pair<int, int> c, Cell type);
+    void setCellType(int r, int c, Cell type);
+    Cell getCellType(pair<int, int> c) const;
+    Cell getCellType(int r, int c) const;
     void setExit(pair<int, int> e);
     pair<int, int> getExit();
     [[nodiscard]] const pair<int, int> &getStart() const;

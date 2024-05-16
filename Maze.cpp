@@ -24,30 +24,33 @@ Maze::Maze(int size, std::mt19937 &rng): rng(rng){
 string Maze::toString() {
     string s = "\n";
     for(const auto& row : maze){
-        for(Cell c : row){
-            switch (c) {
-                case WALL:
-                    s += "# ";
-                    break;
-                case EMPTY:
-                    s += "  ";
-                    break;
-                case START:
-                    s += "@ ";
-                    break;
-                case EXIT:
-                    s += "  ";
-                    break;
-                case PARTICLE:
-                    s += "o ";
-                    break;
-                case PATH:
-                    s += "x ";
-                    break;
-                case ERROR:
-                    s += "! ";
-                    break;
-            }
+        for(auto c : row){
+            if (c.second > 0)   // particles on the cell
+                s += "o ";
+            else
+                switch (c.first) {
+                    case WALL:
+                        s += "# ";
+                        break;
+                    case EMPTY:
+                        s += "  ";
+                        break;
+                    case START:
+                        s += "@ ";
+                        break;
+                    case EXIT:
+                        s += "  ";
+                        break;
+                    case PARTICLE:
+                        s += "o ";
+                        break;
+                    case PATH:
+                        s += "x ";
+                        break;
+                    case ERROR:
+                        s += "! ";
+                        break;
+                }
         }
         s += "\n";
     }
@@ -61,46 +64,69 @@ bool Maze::areValid(int r, int c) const{
 bool Maze::areValid(pair<int, int> p) const {
     return areValid(p.first, p.second);
 }
+void Maze::setCell(int r, int c, Cell type, int nParticles) {
+    if (areValid(r, c))
+        maze[r][c] = make_pair(type, nParticles);
+}
 
-void Maze::setCell(pair<int, int> c, Cell type) {
-    if (areValid(c)){
-        maze[c.first][c.second] = type;
+void Maze::setCell(pair<int, int> c, Cell type, int nParticles) {
+    setCell(c.first, c.second, type, nParticles);
+}
+
+pair<Cell, int> Maze::getCell(int r, int c) const {
+    if (areValid(r, c)){
+        return maze[r][c];
+    } else
+        return pair<Cell, int>();
+}
+
+
+pair<Cell, int> Maze::getCell(pair<int, int> c) const {
+    return getCell(c.first, c.second);
+}
+
+void Maze::setCellType(int r, int c, Cell type) {
+    if (areValid(r, c))
+        maze[r][c].first = type;
+}
+
+void Maze::setCellType(pair<int, int> c, Cell type) {
+    setCellType(c.first, c.second, type);
+}
+
+Cell Maze::getCellType(int r, int c) const{
+    if (areValid(r, c)){
+        if (maze[r][c].second > 0)
+            return PARTICLE;
+        else
+            return maze[r][c].first;
     }
-}
-
-void Maze::setCell(int r, int c, Cell type) {
-    setCell(make_pair(r, c), type);
-}
-
-Cell Maze::getCell(pair<int, int> c) const {
-    if (areValid(c))
-        return maze[c.first][c.second];
     else
         return ERROR;
 }
 
-Cell Maze::getCell(int r, int c) const{
-    return getCell(make_pair(r, c));
+Cell Maze::getCellType(pair<int, int> c) const {
+    return getCellType(c.first, c.second);
 }
 
 void Maze::makeGrid() {
     for(int row = 0; row < size; row++){
-        vector<Cell> mazeRow;
+        vector<pair<Cell, int>> mazeRow;
         mazeRow.reserve(size);
         for (int col= 0; col < size; col++) {
             if((row % 2 == 0 ) || (col % 2 == 0))
-                mazeRow.push_back(WALL);
+                mazeRow.emplace_back(WALL, 0);
             else
-                mazeRow.push_back(EMPTY);
+                mazeRow.emplace_back(EMPTY, 0);
         }
         maze.push_back(mazeRow);
     }
 }
 
 void Maze::setExit(pair<int, int> e) {
-    setCell(exit, WALL);
+    setCellType(exit, WALL);
     exit = e;
-    setCell(exit, EXIT);
+    setCellType(exit, EXIT);
 }
 
 pair<int, int> Maze::getExit() {
@@ -139,23 +165,23 @@ const pair<int, int> &Maze::getStart() const {
 void Maze::setStart(pair<int, int> c) {
     if (areValid(c)) {
         pair<int, int> s;
-        if (getCell(c) == EMPTY)
+        if (getCellType(c) == EMPTY)
             s = c;
-        else if (getCell(c.first - 1, c.second) == EMPTY)
+        else if (getCellType(c.first - 1, c.second) == EMPTY)
             s = make_pair(c.first - 1, c.second);
-        else if (getCell(c.first, c.second -1) == EMPTY)
+        else if (getCellType(c.first, c.second - 1) == EMPTY)
             s = make_pair(c.first, c.second -1);
-        else if (getCell(c.first + 1, c.second)== EMPTY)
+        else if (getCellType(c.first + 1, c.second) == EMPTY)
             s = make_pair(c.first + 1, c.second);
-        else if (getCell(c.first, c.second + 1) == EMPTY)
+        else if (getCellType(c.first, c.second + 1) == EMPTY)
             s = make_pair(c.first, c.second + 1);
         else
             s = make_pair(c.first - 1, c.second - 1);
 
         if (start != make_pair(0, 0))   // if start wasn't initialized it contains (0, 0)
-            setCell(start, EMPTY);
+            setCellType(start, EMPTY);
         start = s;
-        setCell(start, START);
+        setCellType(start, START);
 
     }
 
@@ -219,7 +245,7 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited
             wall_c = currentCell.second;
         }
 
-        setCell(wall_r, wall_c, EMPTY); // remove the wall between currentCell and nextCell
+        setCellType(wall_r, wall_c, EMPTY); // remove the wall between currentCell and nextCell
         visited.insert(make_pair(wall_r, wall_c));
 
         // this_thread::sleep_for(chrono::milliseconds(500));
@@ -243,6 +269,9 @@ const vector<pair<int, int>> &Maze::getSolution() const {
 void Maze::setSolution(const vector<pair<int, int>> &solution) {
     Maze::solution = solution;
 }
+
+
+
 
 
 
