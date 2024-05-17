@@ -6,7 +6,7 @@
 #include "Particle.h"
 
 Particle::Particle(Maze& m) : maze(m){
-    setPosition(maze.getStart(), START);
+    setPosition(maze.getStart());
     path.push_back(position);
     random_device rd;
     rng = mt19937(rd());
@@ -17,34 +17,43 @@ const pair<int, int> &Particle::getPosition() const {
 }
 
 void Particle::setPosition(const pair<int, int> &p) {
-    if (maze.areValid(p) && maze.getCell(p) != WALL){
+    if (maze.areValid(p) && maze.getCellType(p) != WALL){
         if (position != make_pair(0, 0)){   // position not initialized yet
+            maze.removeParticle(position);
+            /*
             if (maze.getExit() == position)
-                maze.setCell(position, EXIT);
+                maze.setCell(position, EXIT, maze.getParticles(position) - 1);
+                // maze.setCellType(position, EXIT);
             else if(maze.getStart() == position)
-                maze.setCell(position, START);
+                maze.setCellType(position, START);
             else
-                maze.setCell(position, EMPTY);
-        }
-        position = p;
-        maze.setCell(position, PARTICLE);
-    }
-}
-void Particle::setPosition(const pair<int, int> &p, Cell underneath){
-    if (maze.areValid(p) && maze.getCell(p) != WALL){
-        if (position != make_pair(0, 0)){   // position not initialized yet
-            if (maze.getExit() == position)
-                maze.setCell(position, EXIT);
-            else if(maze.getStart() == position)
-                maze.setCell(position, START);
-            else
-                maze.setCell(position, underneath);
+                maze.setCellType(position, EMPTY);
+                */
+
         }
 
         position = p;
-        maze.setCell(position, PARTICLE);
+        maze.addParticle(position);
+        //maze.setCellType(position, PARTICLE);
     }
 }
+/*
+void Particle::setPosition(const pair<int, int> &p, Cell underneath){
+    if (maze.areValid(p) && maze.getCellType(p) != WALL){
+        if (position != make_pair(0, 0)){   // position not initialized yet
+            if (maze.getExit() == position)
+                maze.setCellType(position, EXIT);
+            else if(maze.getStart() == position)
+                maze.setCellType(position, START);
+            else
+                maze.setCellType(position, underneath);
+        }
+
+        position = p;
+        maze.setCellType(position, PARTICLE);
+    }
+}
+ */
 pair<int, int> Particle::toCoordinates(Direction d) {
     pair<int, int> c;
     switch (d) {
@@ -69,11 +78,11 @@ pair<int, int> Particle::toCoordinates(Direction d) {
 
 bool Particle::isValid(Direction d) {
     pair<int, int> c = toCoordinates(d);
-    return maze.areValid(c) && maze.getCell(c) != WALL;
+    return maze.areValid(c) && maze.getCellType(c) != WALL;
 }
 
-void Particle::move(pair<int, int> c, Cell underneath, bool display) {
-    setPosition(c, underneath); // setPosition checks if movement is allowed
+void Particle::move(pair<int, int> c, bool display) {
+    setPosition(c); // setPosition checks if movement is allowed
 
     if (path.size() > 1 && position == path[path.size() - 2]) // backtracking
         path.pop_back();
@@ -86,8 +95,8 @@ void Particle::move(pair<int, int> c, Cell underneath, bool display) {
 }
 
 
-void Particle::move(Direction d, Cell underneath, bool display) {
-    move(toCoordinates(d), underneath, display);
+void Particle::move(Direction d, bool display) {
+    move(toCoordinates(d), display);
 }
 
 void Particle::randMove(bool display) {
@@ -97,7 +106,7 @@ void Particle::randMove(bool display) {
             moves.push_back(static_cast<Direction>(d));
     }
     uniform_int_distribution<> dir(0, moves.size() - 1);
-    move(moves[dir(rng)],EMPTY, display);
+    move(moves[dir(rng)], display);
 }
 
 const vector<pair<int, int>> &Particle::getPath() const {
@@ -116,10 +125,13 @@ vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solutio
             } else {
                 // path.pop_back();
                 auto cell = path[path.size() - 2];
-                if (maze.getCell(cell) == PARTICLE)
+                move(cell, display);
+                /*
+                if (maze.getCellType(cell) == PARTICLE)
                     move(cell, PARTICLE, display);
                 else
                     move(cell, EMPTY, display);
+                    */
             }
         }
     }
@@ -128,8 +140,8 @@ vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solutio
 
 void Particle::followPath(const vector<pair<int, int>> &p, bool display) {
     for (auto c : p){
-        move(c, PATH, display);
-        maze.setCell(path[path.size() - 2], PATH);
+        move(c, display);
+        maze.setCellType(path[path.size() - 2], PATH);
     }
 }
 

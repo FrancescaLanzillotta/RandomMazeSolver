@@ -31,14 +31,14 @@ public:
     string toString();
     [[nodiscard]] bool areValid(int r, int c) const;
     [[nodiscard]] bool areValid(pair<int, int> p) const;
-    void setCell(int r, int c, Cell type, int nParticles);
-    void setCell(pair<int, int> c, Cell type, int nParticles);
-    [[nodiscard]] pair<Cell, int> getCell(int r, int c) const;
-    pair<Cell, int> getCell (pair<int, int> c) const;
     void setCellType(pair<int, int> c, Cell type);
     void setCellType(int r, int c, Cell type);
     Cell getCellType(pair<int, int> c) const;
     Cell getCellType(int r, int c) const;
+    void removeParticle(int r, int c);
+    void removeParticle(pair<int, int> c);
+    void addParticle(int r, int c);
+    void addParticle(pair<int, int> c);
     void setExit(pair<int, int> e);
     pair<int, int> getExit();
     [[nodiscard]] const pair<int, int> &getStart() const;
@@ -47,6 +47,14 @@ public:
 
 
 private:
+    void setCell(int r, int c, Cell type, int nParticles);
+    void setCell(pair<int, int> c, Cell type, int nParticles);
+    [[nodiscard]] pair<Cell, int> getCell(int r, int c) const;
+    pair<Cell, int> getCell (pair<int, int> c) const;
+    void setParticles(int r, int c, int n);
+    void setParticles(pair<int, int> c, int n);
+    int getParticles(int r, int c  ) const;
+    int getParticles(pair<int, int> c) const;
     void makeGrid();
     void setRandomExit();
     void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display);

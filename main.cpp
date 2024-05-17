@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
 
-    int size = 11;
+    int size = 21;
     random_device rd;  // a seed source for the random number engine
     mt19937 rng(rd()); // mersenne_twister_engine seeded with rd()
     rng.seed(42);
@@ -15,9 +15,9 @@ int main() {
 
     m.generateMaze(true);
 
-    /*
+
     vector<Particle> particles;
-    int nParticles = 4;
+    int nParticles = 10;
     for (int i = 0; i < nParticles; ++i) {
         particles.emplace_back(m);
         particles[i].setSeed(i + 2);
@@ -54,7 +54,7 @@ int main() {
 
         }
     }
-*/
+
     /*
     Particle p(m);
     vector<Direction> path;

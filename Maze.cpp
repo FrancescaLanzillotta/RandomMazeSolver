@@ -109,6 +109,53 @@ Cell Maze::getCellType(pair<int, int> c) const {
     return getCellType(c.first, c.second);
 }
 
+void Maze::setParticles(int r, int c, int n) {
+    if (areValid(r, c)){
+        maze[r][c].second = n;
+    }
+}
+
+void Maze::setParticles(pair<int, int> c, int n) {
+    setParticles(c.first, c.second, n);
+}
+
+int Maze::getParticles(int r, int c) const {
+    if (areValid(r, c)){
+        return maze[r][c].second;
+    } else
+        return -1;
+}
+
+int Maze::getParticles(pair<int, int> c) const {
+    return getParticles(c.first, c.second);
+}
+
+
+void Maze::removeParticle(int r, int c) {
+    if (areValid(r, c)){
+        int n = getParticles(r, c);
+        if (n > 0)
+            setParticles(r, c, n - 1);
+    }
+}
+
+void Maze::removeParticle(pair<int, int> c) {
+    removeParticle(c.first, c.second);
+
+}
+
+void Maze::addParticle(int r, int c) {
+    if (areValid(r, c)){
+        setParticles(r, c, getParticles(r, c) + 1);
+    }
+
+}
+
+void Maze::addParticle(pair<int, int> c) {
+    addParticle(c.first, c.second);
+}
+
+
 void Maze::makeGrid() {
     for(int row = 0; row < size; row++){
         vector<pair<Cell, int>> mazeRow;
