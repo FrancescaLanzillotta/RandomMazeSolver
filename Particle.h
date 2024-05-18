@@ -15,6 +15,7 @@ private:
     pair<int, int> position;
     vector<pair<int, int>> path;
     std::mt19937 rng;
+    Direction prevMove;
 
 public:
     [[nodiscard]] const pair<int, int> &getPosition() const;

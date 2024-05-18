@@ -10,6 +10,7 @@ Particle::Particle(Maze& m) : maze(m){
     path.push_back(position);
     random_device rd;
     rng = mt19937(rd());
+    prevMove = STAY;
 }
 
 const pair<int, int> &Particle::getPosition() const {
@@ -74,6 +75,8 @@ void Particle::move(pair<int, int> c, bool display) {
         path.pop_back();
     else
         path.push_back(position); // moving forward
+    if (position == maze.getExit())
+        maze.removeParticle(maze.getExit());
     if (display){
         delayedCLS(100);
         cout << maze.toString();
@@ -86,14 +89,47 @@ void Particle::move(Direction d, bool display) {
 }
 
 void Particle::randMove(bool display) {
+    Direction opposite;
+    switch (prevMove) {
+        case UP:
+            opposite = DOWN;
+            break;
+        case DOWN:
+            opposite = UP;
+            break;
+        case LEFT:
+            opposite = RIGHT;
+            break;
+        case RIGHT:
+            opposite = LEFT;
+            break;
+        case STAY:
+            opposite = STAY;
+            break;
+    }
     vector<Direction> moves;
     for (int d = 0; d != STAY; d++) {
-        if (isValid(static_cast<Direction>(d)))
+        Direction dir = static_cast<Direction>(d);
+        if (isValid(dir) && dir != opposite)
             moves.push_back(static_cast<Direction>(d));
     }
+    if (moves.empty())
+        moves.push_back(opposite);
     Direction d;
+    /*
+    if (moves.size() == 2) {
+        if (toCoordinates(moves[0]) == path[path.size() - 2])
+            d = moves[1];
+        else
+            d = moves[0];
+    } else {
+        uniform_int_distribution<> dir(0, moves.size() - 1);
+        d = moves[dir(rng)];
+    }
+    */
     uniform_int_distribution<> dir(0, moves.size() - 1);
     d = moves[dir(rng)];
+    prevMove = d;
     move(d, display);
 }
 
