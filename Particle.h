@@ -28,7 +28,7 @@ public:
     bool isValid(Direction d);
     void move(pair<int, int> c, bool display);
     void move(Direction d, bool display);
-    void randMove(bool display = false);
+    void randMove(bool display, int backwardProb);
     vector<pair<int, int>> backtrack(const vector<pair<int, int>>& solution, bool display);
     void followPath(const vector<pair<int, int>>& p, bool display);
 };

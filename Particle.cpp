@@ -88,7 +88,7 @@ void Particle::move(Direction d, bool display) {
     move(toCoordinates(d), display);
 }
 
-void Particle::randMove(bool display) {
+void Particle::randMove(bool display, int backwardProb) {
     Direction opposite;
     switch (prevMove) {
         case UP:
@@ -109,26 +109,28 @@ void Particle::randMove(bool display) {
     }
     vector<Direction> moves;
     for (int d = 0; d != STAY; d++) {
-        Direction dir = static_cast<Direction>(d);
-        if (isValid(dir) && dir != opposite)
+        auto dir = static_cast<Direction>(d);
+        if (isValid(dir))
             moves.push_back(static_cast<Direction>(d));
     }
-    if (moves.empty())
-        moves.push_back(opposite);
+
     Direction d;
-    /*
-    if (moves.size() == 2) {
-        if (toCoordinates(moves[0]) == path[path.size() - 2])
-            d = moves[1];
-        else
-            d = moves[0];
-    } else {
-        uniform_int_distribution<> dir(0, moves.size() - 1);
+    if (moves.size() > 1){
+        vector<float> distr;
+        distr.reserve(moves.size());
+
+        for (int i = 0; i < moves.size(); ++i) {
+            if (moves[i] != opposite)
+                distr.push_back((100.0 - backwardProb) / static_cast<float>(moves.size()));
+            else
+                distr.push_back(backwardProb);
+        }
+        std::discrete_distribution<> dir(distr.begin(), distr.end());
         d = moves[dir(rng)];
-    }
-    */
-    uniform_int_distribution<> dir(0, moves.size() - 1);
-    d = moves[dir(rng)];
+
+    } else
+        d = moves[0];
+
     prevMove = d;
     move(d, display);
 }

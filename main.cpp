@@ -10,14 +10,13 @@ int main() {
     random_device rd;  // a seed source for the random number engine
     mt19937 rng(rd()); // mersenne_twister_engine seeded with rd()
     rng.seed(42);
-
     Maze m(size, rng);
 
     m.generateMaze(true);
 
 
     vector<Particle> particles;
-    int nParticles = 10;
+    int nParticles = 5;
     for (int i = 0; i < nParticles; ++i) {
         particles.emplace_back(m);
         particles[i].setSeed(i + 2);
@@ -26,7 +25,7 @@ int main() {
     vector<pair<int, int>> solution;
     while (!out){
         for(auto& p : particles){
-            p.randMove(false);
+            p.randMove(false, 2);
             delayedCLS(1);
             cout << m.toString();
             if (p.getPosition() == m.getExit()){
