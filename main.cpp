@@ -42,14 +42,12 @@ int main() {
 //    }
 
     for (auto c : solution){
-        if (m.getCellType(c) != PARTICLE)
-            m.setCellType(c, PATH);
+        m.setCellType(c, PATH);
     }
 
     for( auto& p : particles){
         if(p.getPosition() != m.getExit()){
             auto s = p.backtrack(solution, true);
-            this_thread::sleep_for(chrono::milliseconds(2000));
             p.followPath(s, true);
 
         }

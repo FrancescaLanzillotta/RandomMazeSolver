@@ -25,7 +25,7 @@ private:
     std::mt19937 rng;
 
 public:
-    const vector<pair<int, int>> &getSolution() const;
+    [[nodiscard]] const vector<pair<int, int>> &getSolution() const;
     void setSolution(const vector<pair<int, int>> &solution);
     explicit Maze(int size, std::mt19937 &rng);
     string toString();
@@ -33,8 +33,8 @@ public:
     [[nodiscard]] bool areValid(pair<int, int> p) const;
     void setCellType(pair<int, int> c, Cell type);
     void setCellType(int r, int c, Cell type);
-    Cell getCellType(pair<int, int> c) const;
-    Cell getCellType(int r, int c) const;
+    [[nodiscard]] Cell getCellType(pair<int, int> c) const;
+    [[nodiscard]] Cell getCellType(int r, int c) const;
     void removeParticle(int r, int c);
     void removeParticle(pair<int, int> c);
     void addParticle(int r, int c);

@@ -19,11 +19,11 @@ private:
 public:
     [[nodiscard]] const pair<int, int> &getPosition() const;
     void setPosition(const pair<int, int> &position);
-    // void setPosition(const pair<int, int> &p, Cell underneath);
-    const vector<pair<int, int>> &getPath() const;
+    [[nodiscard]] const vector<pair<int, int>> &getPath() const;
     explicit Particle(Maze& m);
     void setSeed(int seed);
     pair<int, int> toCoordinates(Direction d);
+    Direction toDirection(pair<int, int> c);
     bool isValid(Direction d);
     void move(pair<int, int> c, bool display);
     void move(Direction d, bool display);

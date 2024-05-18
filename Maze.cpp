@@ -41,11 +41,8 @@ string Maze::toString() {
                     case EXIT:
                         s += "  ";
                         break;
-                    case PARTICLE:
-                        s += "o ";
-                        break;
                     case PATH:
-                        s += "x ";
+                        s += ". ";
                         break;
                     case ERROR:
                         s += "! ";
@@ -96,10 +93,7 @@ void Maze::setCellType(pair<int, int> c, Cell type) {
 
 Cell Maze::getCellType(int r, int c) const{
     if (areValid(r, c)){
-        if (maze[r][c].second > 0)
-            return PARTICLE;
-        else
-            return maze[r][c].first;
+        return maze[r][c].first;
     }
     else
         return ERROR;
