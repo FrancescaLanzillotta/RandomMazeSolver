@@ -88,51 +88,62 @@ void Particle::move(Direction d, bool display) {
     move(toCoordinates(d), display);
 }
 
-void Particle::randMove(bool display, int backwardProb) {
-    Direction opposite;
+/***
+ * This function picks a random move out of the ones available to the particle, with the option to inhibit the choice of
+ * going backward with a certain probability. This makes the particle move less erraticly, pushing it to move further
+ * through the labyrinth, instead of goig back and forth.
+ * removeBackProb = 1 removes the move every time thare is more than one choice available, that is the particle is not
+ * ina a dead end.
+ * removeBackProb = 0 never removes the backward move, that is the particle moves truly randomly.
+ * @param display Whether to display the maze or not
+ * @param removeBackProb Probability of removing the backward move if there is more than one choice available.
+ *
+ */
+void Particle::randMove(bool display, float removeBackProb = 0) {
+    Direction backward;
     switch (prevMove) {
         case UP:
-            opposite = DOWN;
+            backward = DOWN;
             break;
         case DOWN:
-            opposite = UP;
+            backward = UP;
             break;
         case LEFT:
-            opposite = RIGHT;
+            backward = RIGHT;
             break;
         case RIGHT:
-            opposite = LEFT;
+            backward = LEFT;
             break;
         case STAY:
-            opposite = STAY;
+            backward = STAY;
             break;
     }
-    vector<Direction> moves;
+
+    vector<Direction> moves;                // find all availbles moves
     for (int d = 0; d != STAY; d++) {
         auto dir = static_cast<Direction>(d);
         if (isValid(dir))
             moves.push_back(static_cast<Direction>(d));
     }
 
-    Direction d;
+    Direction next;
     if (moves.size() > 1){
-        vector<float> distr;
-        distr.reserve(moves.size());
-
-        for (int i = 0; i < moves.size(); ++i) {
-            if (moves[i] != opposite)
-                distr.push_back((100.0 - backwardProb) / static_cast<float>(moves.size()));
-            else
-                distr.push_back(backwardProb);
+        for( int i = 0; i < moves.size(); i++){
+            if (moves[i] == backward){
+                std::bernoulli_distribution b(removeBackProb);
+                if (b(rng) == 1){   // remove the backward move with specified probability
+                    moves.erase(moves.begin() + i);
+                }
+            }
         }
-        std::discrete_distribution<> dir(distr.begin(), distr.end());
-        d = moves[dir(rng)];
+        uniform_int_distribution<> dir(0, moves.size() - 1);
+        next = moves[dir(rng)];     // random choice out of the elements in moves
 
-    } else
-        d = moves[0];
+    } else      // nothing to choose
+        next = moves[0];
 
-    prevMove = d;
-    move(d, display);
+    prevMove = next;
+    move(next, display);
 }
 
 const vector<pair<int, int>> &Particle::getPath() const {
