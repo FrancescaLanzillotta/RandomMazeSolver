@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Particle.h"
 
+
 Particle::Particle(Maze& m) : maze(m){
     setPosition(maze.getStart());
     path.push_back(position);
@@ -17,6 +18,11 @@ const pair<int, int> &Particle::getPosition() const {
     return position;
 }
 
+/***
+ * This function sets the new position of the particle in the maze. To do that, it checks if the coordinates are valid,
+ * if the new cell isn't a wall and updates the number of particles in both the old and new cells in the maze.
+ * @param p pair of coordinates to set the position to
+ */
 void Particle::setPosition(const pair<int, int> &p) {
     if (maze.areValid(p) && maze.getCellType(p) != WALL){
         if (position != make_pair(0, 0))   // position not initialized yet
@@ -26,6 +32,11 @@ void Particle::setPosition(const pair<int, int> &p) {
     }
 }
 
+/***
+ * This functions converts a given Direction to a pair of coordinates
+ * @param d direction to convert
+ * @return pair of coordinates corresponding to the
+ */
 pair<int, int> Particle::toCoordinates(Direction d) {
     pair<int, int> c;
     switch (d) {
