@@ -35,7 +35,7 @@ void Particle::setPosition(const pair<int, int> &p) {
 /***
  * This functions converts a given Direction to a pair of coordinates
  * @param d direction to convert
- * @return pair of coordinates corresponding to the
+ * @return pair of coordinates corresponding to the position of the particle moved in direction d
  */
 pair<int, int> Particle::toCoordinates(Direction d) {
     pair<int, int> c;
@@ -58,6 +58,8 @@ pair<int, int> Particle::toCoordinates(Direction d) {
     }
     return c;
 }
+
+
 Direction Particle::toDirection(pair<int, int> c) {
     Direction d;
     if (c == make_pair(position.first - 1, position.second))
@@ -79,6 +81,12 @@ bool Particle::isValid(Direction d) {
     return maze.areValid(c) && maze.getCellType(c) != WALL;
 }
 
+/***
+ * This functions moves the particle in the specified coordinates. The function adds the new coordinates to particle's
+ * path if the particle is not backtracking. Moreover, if the particle reaches the exit, it's removed from the maze.
+ * @param c new coordinates to move the particle to
+ * @param display whether to display the maze
+ */
 void Particle::move(pair<int, int> c, bool display) {
     setPosition(c); // setPosition checks if movement is allowed
 
@@ -106,8 +114,8 @@ void Particle::move(Direction d, bool display) {
  * removeBackProb = 1 removes the move every time thare is more than one choice available, that is the particle is not
  * ina a dead end.
  * removeBackProb = 0 never removes the backward move, that is the particle moves truly randomly.
- * @param display Whether to display the maze or not
- * @param removeBackProb Probability of removing the backward move if there is more than one choice available.
+ * @param display whether to display the maze or not
+ * @param removeBackProb probability of removing the backward move if there is more than one choice available.
  *
  */
 void Particle::randMove(bool display, float removeBackProb = 0) {
@@ -161,6 +169,13 @@ const vector<pair<int, int>> &Particle::getPath() const {
     return path;
 }
 
+/***
+ * This function backtracks the particle along its path until it reaches a cell in the solution's path. It's guaranteed
+ * that such cell exists, since all cells have the same starting point.
+ * @param solution vector containing the solution's path
+ * @param display whether to display the maze or not
+ * @return tha path towards the exit starting from the cell on the solution's path
+ */
 vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solution, bool display) {
     while (maze.getCellType(position) != PATH){
         move(path[path.size() - 2], display); // backtracking
@@ -178,7 +193,6 @@ vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solutio
 void Particle::followPath(const vector<pair<int, int>> &p, bool display) {
     for (auto c : p){
         move(c, display);
-        // maze.setCellType(path[path.size() - 2], PATH);
     }
 }
 
