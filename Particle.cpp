@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 #include "Particle.h"
 
 
@@ -94,8 +95,6 @@ void Particle::move(pair<int, int> c, bool display) {
         path.pop_back();
     else
         path.push_back(position); // moving forward
-    if (position == maze.getExit())
-        maze.removeParticle(maze.getExit());
     if (display){
         delayedCLS(100);
         cout << maze.toString();
@@ -198,6 +197,14 @@ void Particle::followPath(const vector<pair<int, int>> &p, bool display) {
 
 void Particle::setSeed(int seed) {
     rng.seed(seed);
+}
+
+deque<pair<int, int>> &Particle::getToExit()  {
+    return toExit;
+}
+
+void Particle::setToExit(deque<pair<int, int>> toExit) {
+    Particle::toExit = std::move(toExit);
 }
 
 

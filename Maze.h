@@ -35,6 +35,8 @@ public:
     void setCellType(int r, int c, Cell type);
     [[nodiscard]] Cell getCellType(pair<int, int> c) const;
     [[nodiscard]] Cell getCellType(int r, int c) const;
+    int getParticles(int r, int c  ) const;
+    int getParticles(pair<int, int> c) const;
     void removeParticle(int r, int c);
     void removeParticle(pair<int, int> c);
     void addParticle(int r, int c);
@@ -53,8 +55,6 @@ private:
     pair<Cell, int> getCell (pair<int, int> c) const;
     void setParticles(int r, int c, int n);
     void setParticles(pair<int, int> c, int n);
-    int getParticles(int r, int c  ) const;
-    int getParticles(pair<int, int> c) const;
     void makeGrid();
     void setRandomExit();
     void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display);

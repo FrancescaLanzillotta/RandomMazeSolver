@@ -6,6 +6,7 @@
 #define RANDOMMAZE_PARTICLE_H
 
 #include <utility>
+#include <deque>
 #include "utils.h"
 #include "Maze.h"
 using namespace std;
@@ -16,6 +17,12 @@ private:
     vector<pair<int, int>> path;
     std::mt19937 rng;
     Direction prevMove;
+    deque<pair<int, int>> toExit;
+public:
+    deque<pair<int, int>> &getToExit();
+
+    void setToExit(deque<pair<int, int>> toExit);
+
 public:
     explicit Particle(Maze& m);
     [[nodiscard]] const pair<int, int> &getPosition() const;
@@ -28,7 +35,6 @@ public:
     void randMove(bool display, float removeBackProb);
     vector<pair<int, int>> backtrack(const vector<pair<int, int>>& solution, bool display);
     void followPath(const vector<pair<int, int>>& p, bool display);
-private:
     void move(pair<int, int> c, bool display);
     void move(Direction d, bool display);
 
