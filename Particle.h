@@ -32,11 +32,11 @@ public:
     pair<int, int> toCoordinates(Direction d);
     Direction toDirection(pair<int, int> c);
     bool isValid(Direction d);
-    void randMove(bool display, float removeBackProb);
-    vector<pair<int, int>> backtrack(const vector<pair<int, int>>& solution, bool display);
-    void followPath(const vector<pair<int, int>>& p, bool display);
-    void move(pair<int, int> c, bool display);
-    void move(Direction d, bool display);
+    void randMove(int ms, float removeBackProb);
+    vector<pair<int, int>> backtrack(const vector<pair<int, int>>& solution, int ms);
+    void followPath(const vector<pair<int, int>>& p, int ms);
+    void move(pair<int, int> c, int ms);
+    void move(Direction d, int ms);
 
 };
 

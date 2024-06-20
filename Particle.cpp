@@ -86,24 +86,24 @@ bool Particle::isValid(Direction d) {
  * This functions moves the particle in the specified coordinates. The function adds the new coordinates to particle's
  * path if the particle is not backtracking. Moreover, if the particle reaches the exit, it's removed from the maze.
  * @param c new coordinates to move the particle to
- * @param display whether to display the maze
+ * @param ms whether to display the maze
  */
-void Particle::move(pair<int, int> c, bool display) {
+void Particle::move(pair<int, int> c, int ms) {
     setPosition(c); // setPosition checks if movement is allowed
 
     if (path.size() > 1 && position == path[path.size() - 2]) // backtracking
         path.pop_back();
     else
         path.push_back(position); // moving forward
-    if (display){
-        delayedCLS(100);
+    if (ms > 0){
+        delayedCLS(ms);
         cout << maze.toString();
     }
 }
 
 
-void Particle::move(Direction d, bool display) {
-    move(toCoordinates(d), display);
+void Particle::move(Direction d, int ms) {
+    move(toCoordinates(d), ms);
 }
 
 /***
@@ -113,11 +113,11 @@ void Particle::move(Direction d, bool display) {
  * removeBackProb = 1 removes the move every time thare is more than one choice available, that is the particle is not
  * ina a dead end.
  * removeBackProb = 0 never removes the backward move, that is the particle moves truly randomly.
- * @param display whether to display the maze or not
+ * @param ms whether to display the maze or not
  * @param removeBackProb probability of removing the backward move if there is more than one choice available.
  *
  */
-void Particle::randMove(bool display, float removeBackProb = 0) {
+void Particle::randMove(int ms, float removeBackProb = 0) {
     Direction backward;
     switch (prevMove) {
         case UP:
@@ -161,7 +161,7 @@ void Particle::randMove(bool display, float removeBackProb = 0) {
         next = moves[0];
 
     prevMove = next;
-    move(next, display);
+    move(next, ms);
 }
 
 const vector<pair<int, int>> &Particle::getPath() const {
@@ -172,12 +172,12 @@ const vector<pair<int, int>> &Particle::getPath() const {
  * This function backtracks the particle along its path until it reaches a cell in the solution's path. It's guaranteed
  * that such cell exists, since all cells have the same starting point.
  * @param solution vector containing the solution's path
- * @param display whether to display the maze or not
+ * @param ms whether to diplay the maze or not
  * @return tha path towards the exit starting from the cell on the solution's path
  */
-vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solution, bool display) {
+vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solution, int ms) {
     while (maze.getCellType(position) != PATH){
-        move(path[path.size() - 2], display); // backtracking
+        move(path[path.size() - 2], ms); // backtracking
     }
     int index = 0;
     for(int i = 0; i < solution.size(); i++){
@@ -189,9 +189,9 @@ vector<pair<int, int>> Particle::backtrack(const vector<pair<int, int>>& solutio
     return vector<pair<int, int>> (solution.begin() + index, solution.end());
 }
 
-void Particle::followPath(const vector<pair<int, int>> &p, bool display) {
+void Particle::followPath(const vector<pair<int, int>> &p, int ms) {
     for (auto c : p){
-        move(c, display);
+        move(c, ms);
     }
 }
 
