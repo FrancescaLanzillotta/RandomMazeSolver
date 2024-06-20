@@ -245,7 +245,7 @@ set<pair<int, int>> Maze::getUnvisitedCells(pair<int, int> currentCell, set<pair
     return unvisited;
 }
 
-void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display) {
+void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, int ms) {
     visited.insert(currentCell);
 
     // special case for exit cell
@@ -290,17 +290,17 @@ void Maze::generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited
         visited.insert(make_pair(wall_r, wall_c));
 
         // this_thread::sleep_for(chrono::milliseconds(500));
-        if (display){
-            delayedCLS(50);
+        if (ms > 0){
+            delayedCLS(ms);
             cout << toString();
         }
-        generatePath(nextCell, visited, display);
+        generatePath(nextCell, visited, ms);
     }
 }
 
-void Maze::generateMaze(bool display) {
+void Maze::generateMaze(int ms) {
     set<pair<int, int>> visited;
-    generatePath(getExit(), visited, display);
+    generatePath(getExit(), visited, ms);
 }
 
 const vector<pair<int, int>> &Maze::getSolution() const {

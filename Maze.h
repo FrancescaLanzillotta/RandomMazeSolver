@@ -45,7 +45,7 @@ public:
     pair<int, int> getExit();
     [[nodiscard]] const pair<int, int> &getStart() const;
     void setStart(pair<int, int> c);
-    void generateMaze(bool display = false);
+    void generateMaze(int ms=0);
 
 
 private:
@@ -57,7 +57,7 @@ private:
     void setParticles(pair<int, int> c, int n);
     void makeGrid();
     void setRandomExit();
-    void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, bool display);
+    void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, int ms);
     set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
 
 };
