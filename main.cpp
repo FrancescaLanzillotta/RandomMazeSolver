@@ -2,23 +2,27 @@
 #include <random>
 #include <omp.h>
 #include <chrono>
+#include <fstream>
+#include <filesystem>
 #include "Maze.h"
 #include "Particle.h"
 using namespace std;
 using namespace chrono;
 
-bool f(int n, int id){
-    bool res = false;
-    printf("Thread-%d el:%d\n", id, n);
-    if (n == 13){
-        printf("Out\n");
-        res = true;
+
+template<typename T>
+static string toString(const vector<T>& v) {
+    string s = "[";
+    for(int i = 0; i < v.size(); i++){
+        s += to_string(v[i]);
+        if (i < v.size() - 1)
+            s += ", ";
+        else
+            s += "]";
     }
-    return res;
+    return s;
 }
-
-void s_solveMaze(Maze &m, vector<Particle> &particles, int ms=0, float backProb=0.7){
-
+void s_solveMaze(Maze &m, vector<Particle> &particles, int ms= 0, float backProb= 0.7){
 
     // move particles randomly until one reaches the exit
     bool out = false;
@@ -85,7 +89,6 @@ void s_solveMaze(Maze &m, vector<Particle> &particles, int ms=0, float backProb=
 
 void p_solveMaze(Maze &m, vector<Particle> &particles, int nThreads, int ms=0, float backProb=0.7){
     vector<pair<int, int>> solution;
-
     bool out = false;
 #ifdef _OPENMP
     omp_set_num_threads(nThreads);
@@ -93,7 +96,8 @@ void p_solveMaze(Maze &m, vector<Particle> &particles, int nThreads, int ms=0, f
 #pragma omp parallel shared(out)
         {
 #pragma omp for schedule(static) reduction(||: out)
-            for (auto &p: particles) {
+            for (auto &p : particles) {
+                // Particle p = particles[i];
                 p.randMove(0, backProb);
                 if (p.getPosition() == m.getExit()){
                     out = true;
@@ -103,7 +107,6 @@ void p_solveMaze(Maze &m, vector<Particle> &particles, int nThreads, int ms=0, f
 #pragma omp cancellation point for
             }
         }
-
         if(ms > 0){
             delayedCLS(ms);
             cout << m.toString();
@@ -111,13 +114,14 @@ void p_solveMaze(Maze &m, vector<Particle> &particles, int nThreads, int ms=0, f
     }
 
 #pragma omp for schedule(static)
-    for (auto &c: solution) {
-        m.setCellType(c, PATH);
+    for (int i = 0; i < solution.size(); i++) {
+        m.setCellType(solution[i], PATH);
     }
 
     auto exit = m.getExit();
 #pragma omp for schedule(static)
-    for (auto &p: particles) {
+    for (int i = 0; i < particles.size(); i++) {
+        Particle p = particles[i];
         if (p.getPosition() != exit){
             auto s = p.backtrack(solution, ms);
             p.followPath(s, ms);
@@ -126,92 +130,112 @@ void p_solveMaze(Maze &m, vector<Particle> &particles, int nThreads, int ms=0, f
     }
 #endif
 }
-int main() {
 
-    int size = 51;
-    int ms = 80;
-    int nParticles = 500;
+int main() {
+    /*
+     * Better speedup   -> n particles >>>
+		                -> size >>
+     */
+
+    int size = 81;
+    int ms = 0;
+    int nParticles = 75000;
+    float backProb = 0.85;
+    vector<int> nThreads = {2, 4, 8, 16, 32, 64, 128, 256};
+    int nTests = 10;
+    bool saveResults = true;
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    stringstream ss;
+    ss << std::put_time(std::localtime(&in_time_t), "%Y%m%d-%H%M%S");   // results files have a timestamp
+    string resultsPath = R"(C:\Users\franc\CLionProjects\RandomMaze\results\results-)" + ss.str() + ".txt";
+
+    printf("------------------ Experiments parameters ------------------\n");
+    printf("Square maze size: %d\n", size);
+    printf("Number of particles: %d\n", nParticles);
+    printf("Backward probability removal: %4.2f\n", backProb);
+    printf("Number of tests for each experiment: %d\n", nTests);
+
+
+
 
     random_device rd;  // a seed source for the random number engine
     mt19937 rng(rd()); // mersenne_twister_engine seeded with rd()
     // rng.seed(42);
-    Maze m(size, rng);
 
+    Maze m(size, rng);
     m.generateMaze(0);
 
-    vector<Particle> particles;
-    particles.reserve(nParticles);
-    for(int i = 0; i < nParticles; i++){
-        particles.emplace_back(m);
-    };
-    auto start = system_clock::now();
-    s_solveMaze(m, particles, 0, 0.85);
-    auto end = system_clock::now();
-    auto seqElapsed = duration_cast<milliseconds>(end - start);
-    printf("Seq time: %4.2f\n", (double)seqElapsed.count());
-    // delayedCLS(5000);
-    start = system_clock::now();
-    p_solveMaze(m, particles, 100, 0, 0.85);
-    end = system_clock::now();
-    seqElapsed = duration_cast<milliseconds>(end - start);
-    printf("Par time: %4.2f\n", (double)seqElapsed.count());
 
-    bool out = false;
-    vector<int> v;
-    v.reserve(size);
-    for (int i = 0; i < size; ++i) {
-        v.emplace_back(i);
+    printf("\n------------------ Sequential Experiment ------------------\n");
+    vector<double> sTimes = {};
+    for(int i = 0; i < nTests; i++){
+        printf("Test %d out of %d\n", i + 1, nTests);
+        vector<Particle> particles;
+        particles.reserve(nParticles);
+        for(int k = 0; k < nParticles; k++){
+            particles.emplace_back(m);
+        }
+        auto start = system_clock::now();
+        s_solveMaze(m, particles, ms, backProb);
+        auto end = system_clock::now();
+        auto seqElapsed = duration_cast<milliseconds>(end - start);
+        sTimes.push_back((double)seqElapsed.count());
+        printf("Maze solved (%4.2f ms)\n", sTimes.back());
+        m.resetMaze();
+    }
+    double sAvg = accumulate(sTimes.begin(), sTimes.end(), 0.0) / (double)sTimes.size();
+    printf("Average time per experiment (ms): %4.2f\n", sAvg);
+
+
+    printf("------------------ Parallel Experiment ------------------\n");
+    vector<double> pAvg = {};
+    vector<double> v1speedUps = {};
+    // vector<double> v2speedUps = {};
+    m.resetMaze();
+
+    for (auto &threads: nThreads) {
+        vector<double> pTimes = {};
+        printf("\nThreads used: %d\n", threads);
+        for (int i = 0; i < nTests; ++i) {
+            vector<Particle> particles;
+            particles.reserve(nParticles);
+            for(int k = 0; k < nParticles; k++){
+                particles.emplace_back(m);
+            }
+            printf("Test %d out of %d\n", i + 1, nTests);
+            auto start = system_clock::now();
+            p_solveMaze(m, particles, threads, ms, backProb);
+            auto end = system_clock::now();
+            auto parElapsed = duration_cast<milliseconds>(end - start);
+            pTimes.push_back((double)parElapsed.count());
+            printf("Maze solved (%4.2f ms)\n", pTimes.back());
+            m.resetMaze();
+        }
+        pAvg.push_back(accumulate(pTimes.begin(), pTimes.end(), 0.0) / (double)pTimes.size());
+        v1speedUps.push_back(sAvg / pAvg.back());
+        //v2speedUps.push_back(v2sAvg/ pAvg.back());
+        printf("\nAverage time per %d threads: %4.2f \n\n", threads, pAvg.back());
+        printf("Speedup: %4.2fx\n", v1speedUps.back());
 
     }
 
-#ifdef _OPENMP
-    if(omp_get_cancellation() != 1)
-        cout << "This code uses the OpenMP directive pragma omp cancel parallel in order to stop threads when the "
-                "correct password is found. Make sure to set the environment variable OMP_CANCELLATION to TRUE. ";
-#endif
 
+    if (saveResults){
+        ofstream resultsFile(resultsPath);  // creates and/or opens results file
+        resultsFile << "------------------ Experiments parameters ------------------\n";
+        resultsFile << "Square maze size: " <<  size;
+        resultsFile << "\nNumber of particles: " <<  nParticles;
+        resultsFile << "\nBackward probability removal: " << backProb;
+        resultsFile << "\nNumber of tests for each experiment: " << nTests;
+        resultsFile << "\n------------------ Sequential experiment v1------------------\n";
+        resultsFile << "\nAverage time per experiment (ms): " << sAvg;
+        resultsFile << "\n------------------ Parallel experiment ------------------\n";
+        resultsFile << "\nNumber of threads tested: " << toString(nThreads);
+        resultsFile << "\nAverage time per experiments (ms): " << toString(pAvg);
+        resultsFile << "\nSpeedups : " << toString(v1speedUps);
 
-
-//    while (!t){
-//#pragma omp parallel shared(t)
-//        {
-//
-//#pragma omp for schedule(static, 4) reduction(||: t)
-//            for (auto &el: v) {
-//                t |= f(el, omp_get_thread_num());
-//                if (t){
-//#pragma cancel for
-//                }
-//#pragma omp cancellation point for
-//            }
-//        }
-//    }
-
-//#ifdef _OPENMP
-//#pragma omp parallel
-//    {
-//#pragma omp single nowait
-//        {
-//            while (!out){
-//#pragma omp taskgroup
-//                {
-//                    for (auto &el: v) {
-//#pragma omp task
-//                        {
-//                            out = f(el, omp_get_thread_num());
-//                        if(out){
-//#pragma omp cancel taskgroup
-//                        }
-//#pragma omp cancellation point taskgroup
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//#endif
-
-
+    }
 
     return 0;
 
