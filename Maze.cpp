@@ -311,6 +311,16 @@ void Maze::setSolution(const vector<pair<int, int>> &solution) {
     Maze::solution = solution;
 }
 
+void Maze::resetMaze() {
+    for(auto &row : maze){
+        for(auto &c : row){
+            if (c.second > 0)
+                c.second = 0;
+        }
+    }
+    cout << "All particles removed from maze" << endl;
+}
+
 
 
 

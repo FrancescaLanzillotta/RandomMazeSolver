@@ -46,7 +46,7 @@ public:
     [[nodiscard]] const pair<int, int> &getStart() const;
     void setStart(pair<int, int> c);
     void generateMaze(int ms=0);
-
+    void resetMaze();
 
 private:
     void setCell(int r, int c, Cell type, int nParticles);
