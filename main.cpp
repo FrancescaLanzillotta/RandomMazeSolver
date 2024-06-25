@@ -132,10 +132,6 @@ void p_solveMaze(Maze &m, vector<Particle> &particles, int nThreads, int ms=0, f
 }
 
 int main() {
-    /*
-     * Better speedup   -> n particles >>>
-		                -> size >>
-     */
 
     int size = 81;
     int ms = 0;
@@ -155,8 +151,6 @@ int main() {
     printf("Number of particles: %d\n", nParticles);
     printf("Backward probability removal: %4.2f\n", backProb);
     printf("Number of tests for each experiment: %d\n", nTests);
-
-
 
 
     random_device rd;  // a seed source for the random number engine
@@ -191,7 +185,6 @@ int main() {
     printf("------------------ Parallel Experiment ------------------\n");
     vector<double> pAvg = {};
     vector<double> v1speedUps = {};
-    // vector<double> v2speedUps = {};
     m.resetMaze();
 
     for (auto &threads: nThreads) {
@@ -214,7 +207,6 @@ int main() {
         }
         pAvg.push_back(accumulate(pTimes.begin(), pTimes.end(), 0.0) / (double)pTimes.size());
         v1speedUps.push_back(sAvg / pAvg.back());
-        //v2speedUps.push_back(v2sAvg/ pAvg.back());
         printf("\nAverage time per %d threads: %4.2f \n\n", threads, pAvg.back());
         printf("Speedup: %4.2fx\n", v1speedUps.back());
 
