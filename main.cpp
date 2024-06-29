@@ -9,19 +9,6 @@
 using namespace std;
 using namespace chrono;
 
-
-template<typename T>
-static string toString(const vector<T>& v) {
-    string s = "[";
-    for(int i = 0; i < v.size(); i++){
-        s += to_string(v[i]);
-        if (i < v.size() - 1)
-            s += ", ";
-        else
-            s += "]";
-    }
-    return s;
-}
 void s_solveMaze(Maze &m, vector<Particle> &particles, int ms= 0, float backProb= 0.7){
 
     // move particles randomly until one reaches the exit
