@@ -15,6 +15,7 @@ Particle::Particle(Maze& m) : maze(m){
     prevMove = STAY;
 }
 
+
 const pair<int, int> &Particle::getPosition() const {
     return position;
 }
@@ -193,10 +194,6 @@ void Particle::followPath(const vector<pair<int, int>> &p, int ms) {
     for (auto c : p){
         move(c, ms);
     }
-}
-
-void Particle::setSeed(int seed) {
-    rng.seed(seed);
 }
 
 deque<pair<int, int>> &Particle::getToExit()  {

@@ -19,16 +19,12 @@ private:
     Direction prevMove;
     deque<pair<int, int>> toExit;
 public:
-    deque<pair<int, int>> &getToExit();
-
-    void setToExit(deque<pair<int, int>> toExit);
-
-public:
     explicit Particle(Maze& m);
+    deque<pair<int, int>> &getToExit();
+    void setToExit(deque<pair<int, int>> toExit);
     [[nodiscard]] const pair<int, int> &getPosition() const;
     void setPosition(const pair<int, int> &position);
     [[nodiscard]] const vector<pair<int, int>> &getPath() const;
-    void setSeed(int seed);
     pair<int, int> toCoordinates(Direction d);
     Direction toDirection(pair<int, int> c);
     bool isValid(Direction d);
