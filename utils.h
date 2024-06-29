@@ -32,4 +32,17 @@ enum Direction {
     RIGHT,
     STAY,   // Make sure STAY is always the last
 };
+
+template<typename T>
+static string toString(const vector<T>& v) {
+    string s = "[";
+    for(int i = 0; i < v.size(); i++){
+        s += to_string(v[i]);
+        if (i < v.size() - 1)
+            s += ", ";
+        else
+            s += "]";
+    }
+    return s;
+}
 #endif //RANDOMMAZE_UTILS_H

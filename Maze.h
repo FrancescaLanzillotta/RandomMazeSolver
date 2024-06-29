@@ -24,6 +24,17 @@ private:
     vector<pair<int, int>> solution;
     std::mt19937 rng;
 
+    void setCell(int r, int c, Cell type, int nParticles);
+    void setCell(pair<int, int> c, Cell type, int nParticles);
+    [[nodiscard]] pair<Cell, int> getCell(int r, int c) const;
+    pair<Cell, int> getCell (pair<int, int> c) const;
+    void setParticles(int r, int c, int n);
+    void setParticles(pair<int, int> c, int n);
+    void makeGrid();
+    void setRandomExit();
+    void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, int ms);
+    set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
+
 public:
     [[nodiscard]] const vector<pair<int, int>> &getSolution() const;
     void setSolution(const vector<pair<int, int>> &solution);
@@ -47,18 +58,6 @@ public:
     void setStart(pair<int, int> c);
     void generateMaze(int ms=0);
     void resetMaze();
-
-private:
-    void setCell(int r, int c, Cell type, int nParticles);
-    void setCell(pair<int, int> c, Cell type, int nParticles);
-    [[nodiscard]] pair<Cell, int> getCell(int r, int c) const;
-    pair<Cell, int> getCell (pair<int, int> c) const;
-    void setParticles(int r, int c, int n);
-    void setParticles(pair<int, int> c, int n);
-    void makeGrid();
-    void setRandomExit();
-    void generatePath(pair<int, int> currentCell, set<pair<int, int>> &visited, int ms);
-    set<pair<int, int>> getUnvisitedCells(pair<int, int> currentCell, set<pair<int, int>>& visited) const;
 
 };
 

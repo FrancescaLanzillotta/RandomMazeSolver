@@ -318,7 +318,7 @@ void Maze::resetMaze() {
                 c.second = 0;
         }
     }
-    cout << "All particles removed from maze" << endl;
+    // cout << "All particles removed from maze" << endl;
 }
 
 
